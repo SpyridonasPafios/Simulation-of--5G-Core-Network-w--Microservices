@@ -23,7 +23,11 @@ This project simulates a **5G Core Network** using a **microservices-based archi
 
 2. **Install dependencies:**
    ```sh
-   pip install -r requirements.txt
+   pip install fastapi uvicorn requests
+   ```
+   
+   ```sh
+   pip install "fastapi[all]"
    ```
 
 ## 🏃 Running the Microservices
