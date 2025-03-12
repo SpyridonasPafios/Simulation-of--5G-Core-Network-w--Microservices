@@ -5,6 +5,7 @@ import random
 import math
 import os
 
+# --- CPU & RAM Stress Functions ---
 def compute_pi(n):
     pi = 0.0
     for k in range(n):
@@ -35,19 +36,27 @@ async def handle_request(request: dict):
     request_type = request.get("type")
     load_factor = request.get("load_factor", 1)
     
-    if request_type == "registration":
-        requests.post(f"{MICROSERVICES['auth']}/authenticate", json=request)
-        requests.post(f"{MICROSERVICES['session']}/start_session", json=request)
-    elif request_type == "session_establishment":
-        requests.post(f"{MICROSERVICES['session']}/start_session", json=request)
-        requests.post(f"{MICROSERVICES['policy']}/apply_policy", json=request)
-        requests.post(f"{MICROSERVICES['resource']}/allocate_resources", json=request)
-    elif request_type == "data_transfer":
-        requests.post(f"{MICROSERVICES['data']}/forward_data", json=request)
-    else:
-        raise HTTPException(status_code=400, detail="Invalid request type")
-    
-    return {"status": "completed"}
+    try:
+        if request_type == "registration":
+            auth_resp = requests.post(f"{MICROSERVICES['auth']}/authenticate", json=request).json()
+            session_resp = requests.post(f"{MICROSERVICES['session']}/start_session", json=request).json()
+            return {"auth": auth_resp, "session": session_resp}
+
+        elif request_type == "session_establishment":
+            session_resp = requests.post(f"{MICROSERVICES['session']}/start_session", json=request).json()
+            policy_resp = requests.post(f"{MICROSERVICES['policy']}/apply_policy", json=request).json()
+            resource_resp = requests.post(f"{MICROSERVICES['resource']}/allocate_resources", json=request).json()
+            return {"session": session_resp, "policy": policy_resp, "resource": resource_resp}
+
+        elif request_type == "data_transfer":
+            data_resp = requests.post(f"{MICROSERVICES['data']}/forward_data", json=request).json()
+            return {"data": data_resp}
+
+        else:
+            raise HTTPException(status_code=400, detail="Invalid request type")
+
+    except requests.exceptions.RequestException as e:
+        raise HTTPException(status_code=500, detail=f"Microservice error: {str(e)}")
 
 # --- Authentication Service ---
 auth_service = FastAPI()
@@ -93,11 +102,15 @@ async def forward_data(request: dict):
 def ue_simulator(request_type, load_factor):
     request = {"type": request_type, "load_factor": load_factor}
     start_time = time.time()
-    response = requests.post("http://localhost:8000/api/request", json=request)
-    end_time = time.time()
-    return response.json(), end_time - start_time
+    try:
+        response = requests.post("http://localhost:8000/api/request", json=request)
+        response.raise_for_status()
+        end_time = time.time()
+        return response.json(), end_time - start_time
+    except requests.exceptions.RequestException as e:
+        return {"error": str(e)}, None
 
 if __name__ == "__main__":
     for req_type in ["registration", "session_establishment", "data_transfer"]:
         result, latency = ue_simulator(req_type, random.randint(1, 5))
-        print(f"Request: {req_type}, Response: {result}, Latency: {latency:.3f}s")
+        print(f"Request: {req_type}, Response: {result}, Latency: {latency:.3f}s" if latency else "Request failed")
