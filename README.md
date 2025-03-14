@@ -1,115 +1,218 @@
-# 5G Microservices Simulation
+Here’s a comprehensive `README.md` file for your GitHub repository. This file explains the project, its structure, how to set it up, and how to run it. You can customize it further based on your specific needs.
 
-This project simulates a **5G Core Network** using a **microservices-based architecture**. It includes an **API Gateway**, multiple **microservices**, and a **UE Simulator** to generate requests and measure performance.
+---
 
-## 🚀 Features
-- Microservices for **Authentication, Session Management, Policy Control, Resource Management, and Data Forwarding**.
-- **CPU/RAM stress testing** based on request load.
-- **Network Slicing** with Kubernetes namespaces.
-- Performance testing using a **UE Simulator**.
+# 5G Core Network Simulation with Kubernetes
 
-## 📌 Requirements
-- **Python 3.8+**
-- **FastAPI** & **Uvicorn**
-- **Docker** & **Kubernetes** (for deployment)
+This project simulates a 5G Core Network using microservices deployed in Kubernetes. It includes three network slices (eMBB, Massive IoT, and URLLC) with isolated resources and a UE Simulator to generate and measure requests.
 
-## 🔧 Installation
+---
 
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/yourusername/5g-microservices.git
-   cd 5g-microservices
-   ```
+## Table of Contents
 
-2. **Install dependencies:**
-   ```sh
-   pip install fastapi uvicorn requests
-   ```
-   
-   ```sh
-   pip install "fastapi[all]"
-   ```
+1. [Project Overview](#project-overview)
+2. [Folder Structure](#folder-structure)
+3. [Prerequisites](#prerequisites)
+4. [Setup and Deployment](#setup-and-deployment)
+5. [Running the UE Simulator](#running-the-ue-simulator)
+6. [Experiments](#experiments)
+7. [Results](#results)
+8. [Contributing](#contributing)
+9. [License](#license)
 
-## 🏃 Running the Microservices
+---
 
-Run each service in a separate terminal:
+## Project Overview
 
-### API Gateway
-```sh
-uvicorn 5g_microservices:gateway --host 0.0.0.0 --port 8000 --reload
+The project simulates a 5G Core Network with the following components:
+
+- **Microservices**:
+  - API Gateway
+  - Authentication Service
+  - Session Manager
+  - Policy Control Service
+  - Resource Manager
+  - Data Forwarding Service
+
+- **Network Slices**:
+  - **eMBB**: High load factor, fewer requests.
+  - **Massive IoT**: Low load factor, frequent requests.
+  - **URLLC**: Moderate load factor, low latency.
+
+- **UE Simulator**:
+  - Simulates user equipment (UE) requests for each slice.
+  - Measures latency for different request types (registration, session establishment, data transfer).
+
+---
+
+## Folder Structure
+
+```
+5g-core-network/
+├── api-gateway/
+│   ├── app/
+│   │   └── main.py              # Python code for API Gateway
+│   ├── Dockerfile               # Dockerfile for API Gateway
+│   ├── requirements.txt         # Dependencies for API Gateway
+│   └── api-gateway-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── auth-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Authentication Service
+│   ├── Dockerfile               # Dockerfile for Authentication Service
+│   ├── requirements.txt         # Dependencies for Authentication Service
+│   └── auth-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── session-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Session Manager
+│   ├── Dockerfile               # Dockerfile for Session Manager
+│   ├── requirements.txt         # Dependencies for Session Manager
+│   └── session-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── policy-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Policy Control Service
+│   ├── Dockerfile               # Dockerfile for Policy Control Service
+│   ├── requirements.txt         # Dependencies for Policy Control Service
+│   └── policy-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── resource-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Resource Manager
+│   ├── Dockerfile               # Dockerfile for Resource Manager
+│   ├── requirements.txt         # Dependencies for Resource Manager
+│   └── resource-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── data-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Data Forwarding Service
+│   ├── Dockerfile               # Dockerfile for Data Forwarding Service
+│   ├── requirements.txt         # Dependencies for Data Forwarding Service
+│   └── data-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── ue-simulator/
+│   ├── app/
+│   │   └── main.py              # Python code for UE Simulator
+│   ├── Dockerfile               # Dockerfile for UE Simulator
+│   ├── requirements.txt         # Dependencies for UE Simulator
+│   └── ue-simulator-job.yaml    # Kubernetes Job YAML for UE Simulator
+│
+├── embb-quota.yaml              # ResourceQuota for eMBB namespace
+├── massive-iot-quota.yaml       # ResourceQuota for Massive IoT namespace
+├── urllc-quota.yaml             # ResourceQuota for URLLC namespace
+└── README.md                    # Project documentation
 ```
 
-### Authentication Service
-```sh
-uvicorn 5g_microservices:auth_service --host 0.0.0.0 --port 8001 --reload
+---
+
+## Prerequisites
+
+- **Docker**: Install Docker from [here](https://docs.docker.com/get-docker/).
+- **Kubernetes**: Install Minikube or use a Kubernetes cluster.
+- **kubectl**: Install kubectl from [here](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+- **Python 3.9**: Install Python from [here](https://www.python.org/downloads/).
+
+---
+
+## Setup and Deployment
+
+### 1. Build Docker Images
+
+Navigate to each microservice folder and build the Docker image:
+
+```bash
+cd api-gateway
+docker build -t your-username/api-gateway:latest .
+docker push your-username/api-gateway:latest
 ```
 
-### Session Manager
-```sh
-uvicorn 5g_microservices:session_service --host 0.0.0.0 --port 8002 --reload
+Repeat for all microservices.
+
+### 2. Create Kubernetes Namespaces
+
+```bash
+kubectl create namespace embb
+kubectl create namespace massive-iot
+kubectl create namespace urllc
 ```
 
-### Policy Control Service
-```sh
-uvicorn 5g_microservices:policy_service --host 0.0.0.0 --port 8003 --reload
+### 3. Apply Resource Quotas
+
+```bash
+kubectl apply -f embb-quota.yaml
+kubectl apply -f massive-iot-quota.yaml
+kubectl apply -f urllc-quota.yaml
 ```
 
-### Resource Manager
-```sh
-uvicorn 5g_microservices:resource_service --host 0.0.0.0 --port 8004 --reload
+### 4. Deploy Microservices
+
+Deploy microservices to their respective namespaces:
+
+```bash
+kubectl apply -f api-gateway-deployment-embb.yaml
+kubectl apply -f auth-service-deployment-embb.yaml
+# Repeat for all microservices and namespaces
 ```
 
-### Data Forwarding Service
-```sh
-uvicorn 5g_microservices:data_service --host 0.0.0.0 --port 8005 --reload
+---
+
+## Running the UE Simulator
+
+### 1. Build and Push UE Simulator Image
+
+```bash
+cd ue-simulator
+docker build -t your-username/ue-simulator:latest .
+docker push your-username/ue-simulator:latest
 ```
 
-## 📡 Running the UE Simulator
+### 2. Deploy UE Simulator
 
-The UE Simulator sends requests and measures latency:
-```sh
-python 5g_microservices.py
+```bash
+kubectl apply -f ue-simulator-job.yaml -n embb
+kubectl apply -f ue-simulator-job.yaml -n massive-iot
+kubectl apply -f ue-simulator-job.yaml -n urllc
 ```
 
-## 📊 Testing API Requests
-You can send requests manually using **cURL**:
-```sh
-curl -X POST "http://localhost:8000/api/request" \
--H "Content-Type: application/json" \
--d '{"type": "registration", "load_factor": 3}'
+### 3. View Logs
+
+```bash
+kubectl logs <ue-simulator-pod-name> -n embb
+kubectl logs <ue-simulator-pod-name> -n massive-iot
+kubectl logs <ue-simulator-pod-name> -n urllc
 ```
 
-## 🐳 Running with Docker
+---
 
-1. **Build Docker images:**
-   ```sh
-   docker-compose build
-   ```
+## Experiments
 
-2. **Run the services:**
-   ```sh
-   docker-compose up
-   ```
+### Scenario A (Without Slicing)
+- Deploy all microservices in a single namespace.
+- Run the UE Simulator and measure latency.
 
-## ☁️ Deploying on Kubernetes
+### Scenario B (With Slicing)
+- Deploy microservices in their respective namespaces (`embb`, `massive-iot`, `urllc`).
+- Run the UE Simulator for each slice and measure latency.
 
-1. **Apply Kubernetes manifests:**
-   ```sh
-   kubectl apply -f k8s/
-   ```
-2. **Check running pods:**
-   ```sh
-   kubectl get pods -n 5g-network
-   ```
+---
 
-## 📈 Performance Monitoring
+## Results
 
-- **Latency comparison (slicing vs non-slicing).**
-- **CPU/RAM utilization per namespace.**
-- **Request rate per slice.**
+Compare the latency measurements from **Scenario A** and **Scenario B** to analyze the impact of slicing on performance.
 
-## 🤝 Contributing
-Feel free to open issues and pull requests! 🚀
+---
 
-## 📜 License
-MIT License. See `LICENSE` file for details.
+## Contributing
+
+Contributions are welcome! Please open an issue or submit a pull request.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+Let me know if you need further assistance! 🚀
