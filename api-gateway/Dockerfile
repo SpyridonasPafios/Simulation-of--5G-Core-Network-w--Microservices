@@ -7,11 +7,11 @@ WORKDIR /app
 # Install dependencies
 RUN pip install fastapi uvicorn requests
 
-# Copy the microservice code
+# Copy the rest of the application code
 COPY . .
 
 # Expose the service port
 EXPOSE 8000
 
 # Run the microservice
-CMD ["uvicorn", "main:gateway", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:gateway", "--host", "0.0.0.0", "--port", "8000"]

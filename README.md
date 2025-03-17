@@ -162,57 +162,63 @@ kubectl apply -f auth-service-deployment-embb.yaml
 ### 1. Build and Push UE Simulator Image
 
 ```bash
+cd api-gateway
+docker build -t my-api-gateway .
+docker tag my-api-gateway eliasandronikou/my-api-gateway:latest
+docker push eliasandronikou/my-api-gateway:latest
+cd ..
+cd auth-service
+docker build -t my-auth-service .
+docker tag my-auth-service eliasandronikou/my-auth-service:latest
+docker push eliasandronikou/my-auth-service:latest
+cd ..
+cd session-service
+docker build -t my-session-service .
+docker tag my-session-service eliasandronikou/my-session-service:latest
+docker push eliasandronikou/my-session-service:latest
+cd ..
+cd policy-service
+docker build -t my-policy-service .
+docker tag my-policy-service eliasandronikou/my-policy-service:latest
+docker push eliasandronikou/my-policy-service:latest
+cd ..
+docker build -t my-resource-service .
+docker tag my-resource-service eliasandronikou/my-resource-service:latest
+docker push eliasandronikou/my-resource-service:latest
+cd ..
+cd data-service
+docker build -t my-data-service .
+docker tag my-data-service eliasandronikou/my-data-service:latest
+docker push eliasandronikou/my-data-service:latest
+cd ..
 cd ue-simulator
-docker build -t your-username/ue-simulator:latest .
-docker push your-username/ue-simulator:latest
+docker build -t my-ue-simulator .
+docker tag my-ue-simulator eliasandronikou/my-ue-simulator:latest
+docker push eliasandronikou/my-ue-simulator:latest
+cd ..
 ```
 
 ### 2. Deploy UE Simulator
 
 ```bash
-kubectl apply -f ue-simulator-job.yaml -n embb
-kubectl apply -f ue-simulator-job.yaml -n massive-iot
-kubectl apply -f ue-simulator-job.yaml -n urllc
+kubectl apply -f api-gateway/api-gateway-deployment.yaml
+kubectl apply -f auth-service/auth-service-deployment.yaml
+kubectl apply -f session-service/session-service-deployment.yaml
+kubectl apply -f policy-service/policy-service-deployment.yaml
+kubectl apply -f resource-service/resource-service-deployment.yaml
+kubectl apply -f data-service/data-service-deployment.yaml
+kubectl apply -f ue-simulator/ue-simulator-job.yaml
 ```
 
 ### 3. View Logs
 
 ```bash
-kubectl logs <ue-simulator-pod-name> -n embb
-kubectl logs <ue-simulator-pod-name> -n massive-iot
-kubectl logs <ue-simulator-pod-name> -n urllc
+kubectl get pods
+kubectl logs <pod-name>
 ```
 
----
+### 4. Updates
 
-## Experiments
-
-### Scenario A (Without Slicing)
-- Deploy all microservices in a single namespace.
-- Run the UE Simulator and measure latency.
-
-### Scenario B (With Slicing)
-- Deploy microservices in their respective namespaces (`embb`, `massive-iot`, `urllc`).
-- Run the UE Simulator for each slice and measure latency.
-
----
-
-## Results
-
-Compare the latency measurements from **Scenario A** and **Scenario B** to analyze the impact of slicing on performance.
-
----
-
-## Contributing
-
-Contributions are welcome! Please open an issue or submit a pull request.
-
----
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-Let me know if you need further assistance! 🚀
+```bash
+docker build -t eliasandronikou/api-gateway:latest .
+```

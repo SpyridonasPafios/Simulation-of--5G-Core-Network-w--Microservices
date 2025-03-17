@@ -8,4 +8,4 @@ COPY . .
 
 EXPOSE 8003
 
-CMD ["uvicorn", "main:policy_service", "--host", "0.0.0.0", "--port", "8003"]
+CMD ["uvicorn", "app.main:policy_service", "--host", "0.0.0.0", "--port", "8003"]
