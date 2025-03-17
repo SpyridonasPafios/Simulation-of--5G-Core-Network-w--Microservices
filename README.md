@@ -163,38 +163,32 @@ kubectl apply -f auth-service-deployment-embb.yaml
 
 ```bash
 cd api-gateway
-docker build -t my-api-gateway .
-docker tag my-api-gateway eliasandronikou/my-api-gateway:latest
-docker push eliasandronikou/my-api-gateway:latest
+docker build -t eliasandronikou/api-gateway .
+docker push eliasandronikou/api-gateway:latest
 cd ..
 cd auth-service
-docker build -t my-auth-service .
-docker tag my-auth-service eliasandronikou/my-auth-service:latest
-docker push eliasandronikou/my-auth-service:latest
+docker build -t eliasandronikou/auth-service .
+docker push eliasandronikou/auth-service:latest
 cd ..
 cd session-service
-docker build -t my-session-service .
-docker tag my-session-service eliasandronikou/my-session-service:latest
-docker push eliasandronikou/my-session-service:latest
+docker build -t eliasandronikou/session-service .
+docker push eliasandronikou/session-service:latest
 cd ..
 cd policy-service
-docker build -t my-policy-service .
-docker tag my-policy-service eliasandronikou/my-policy-service:latest
-docker push eliasandronikou/my-policy-service:latest
+docker build -t eliasandronikou/policy-service .
+docker push eliasandronikou/policy-service:latest
 cd ..
 docker build -t my-resource-service .
 docker tag my-resource-service eliasandronikou/my-resource-service:latest
 docker push eliasandronikou/my-resource-service:latest
 cd ..
 cd data-service
-docker build -t my-data-service .
-docker tag my-data-service eliasandronikou/my-data-service:latest
-docker push eliasandronikou/my-data-service:latest
+docker build -t eliasandronikou/data-service .
+docker push eliasandronikou/data-service:latest
 cd ..
 cd ue-simulator
-docker build -t my-ue-simulator .
-docker tag my-ue-simulator eliasandronikou/my-ue-simulator:latest
-docker push eliasandronikou/my-ue-simulator:latest
+docker build -t eliasandronikou/ue-simulator .
+docker push eliasandronikou/ue-simulator:latest
 cd ..
 ```
 
@@ -207,7 +201,7 @@ kubectl apply -f session-service/session-service-deployment.yaml
 kubectl apply -f policy-service/policy-service-deployment.yaml
 kubectl apply -f resource-service/resource-service-deployment.yaml
 kubectl apply -f data-service/data-service-deployment.yaml
-kubectl apply -f ue-simulator/ue-simulator-job.yaml
+kubectl apply -f ue-simulator/ue-simulator.yaml
 ```
 
 ### 3. View Logs
@@ -221,4 +215,30 @@ kubectl logs <pod-name>
 
 ```bash
 docker build -t eliasandronikou/api-gateway:latest .
+```
+### 5. Clean ups
+
+```bash
+kubectl delete -f api-gateway-deployment.yaml
+kubectl delete -f auth-service-deployment.yaml
+kubectl delete -f session-service-deployment.yaml
+kubectl delete -f policy-service-deployment.yaml
+kubectl delete -f resource-service-deployment.yaml
+kubectl delete -f data-service-deployment.yaml
+kubectl delete -f ue-simulator-job.yaml
+```
+
+### 6. Usefull commands
+
+```bash
+kubectl delete pods --all -n default
+```
+
+```bash
+kubectl rollout restart deployment/api-gateway
+kubectl rollout restart deployment/auth-service
+kubectl rollout restart deployment/data-service
+kubectl rollout restart deployment/policy-service
+kubectl rollout restart deployment/resource-service
+kubectl rollout restart deployment/session-service
 ```
