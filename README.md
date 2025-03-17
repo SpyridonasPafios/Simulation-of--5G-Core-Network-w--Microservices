@@ -53,14 +53,12 @@ The project simulates a 5G Core Network with the following components:
 │   ├── app/
 │   │   └── main.py              # Python code for API Gateway
 │   ├── Dockerfile               # Dockerfile for API Gateway
-│   ├── requirements.txt         # Dependencies for API Gateway
 │   └── api-gateway-deployment.yaml  # Kubernetes Deployment and Service YAML
 │
 ├── auth-service/
 │   ├── app/
 │   │   └── main.py              # Python code for Authentication Service
 │   ├── Dockerfile               # Dockerfile for Authentication Service
-│   ├── requirements.txt         # Dependencies for Authentication Service
 │   └── auth-service-deployment.yaml  # Kubernetes Deployment and Service YAML
 │
 ├── session-service/
@@ -81,21 +79,18 @@ The project simulates a 5G Core Network with the following components:
 │   ├── app/
 │   │   └── main.py              # Python code for Resource Manager
 │   ├── Dockerfile               # Dockerfile for Resource Manager
-│   ├── requirements.txt         # Dependencies for Resource Manager
 │   └── resource-service-deployment.yaml  # Kubernetes Deployment and Service YAML
 │
 ├── data-service/
 │   ├── app/
 │   │   └── main.py              # Python code for Data Forwarding Service
 │   ├── Dockerfile               # Dockerfile for Data Forwarding Service
-│   ├── requirements.txt         # Dependencies for Data Forwarding Service
 │   └── data-service-deployment.yaml  # Kubernetes Deployment and Service YAML
 │
 ├── ue-simulator/
 │   ├── app/
 │   │   └── main.py              # Python code for UE Simulator
 │   ├── Dockerfile               # Dockerfile for UE Simulator
-│   ├── requirements.txt         # Dependencies for UE Simulator
 │   └── ue-simulator-job.yaml    # Kubernetes Job YAML for UE Simulator
 │
 ├── embb-quota.yaml              # ResourceQuota for eMBB namespace
@@ -178,9 +173,9 @@ cd policy-service
 docker build -t eliasandronikou/policy-service .
 docker push eliasandronikou/policy-service:latest
 cd ..
-docker build -t my-resource-service .
-docker tag my-resource-service eliasandronikou/my-resource-service:latest
-docker push eliasandronikou/my-resource-service:latest
+cd resource-service
+docker build -t eliasandronikou/resource-service .
+docker push eliasandronikou/resource-service:latest
 cd ..
 cd data-service
 docker build -t eliasandronikou/data-service .
@@ -207,6 +202,7 @@ kubectl apply -f ue-simulator/ue-simulator.yaml
 ### 3. View Logs
 
 ```bash
+kubectl get jobs
 kubectl get pods
 kubectl logs <pod-name>
 ```
@@ -225,13 +221,14 @@ kubectl delete -f session-service-deployment.yaml
 kubectl delete -f policy-service-deployment.yaml
 kubectl delete -f resource-service-deployment.yaml
 kubectl delete -f data-service-deployment.yaml
-kubectl delete -f ue-simulator-job.yaml
+kubectl delete -f ue-simulator.yaml
 ```
 
 ### 6. Usefull commands
 
 ```bash
 kubectl delete pods --all -n default
+kubectl delete job ue-simulator
 ```
 
 ```bash
