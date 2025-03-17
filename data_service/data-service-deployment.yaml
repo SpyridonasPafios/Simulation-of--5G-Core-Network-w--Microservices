@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: data-service
-        image: your-data-service-image:latest
+        image: eliasandronikou/data-service:latest
         env:
         - name: CPU_MULTIPLIER
           value: "1000"

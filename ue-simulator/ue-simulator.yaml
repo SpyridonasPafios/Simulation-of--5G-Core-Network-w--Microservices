@@ -7,9 +7,9 @@ spec:
     spec:
       containers:
       - name: ue-simulator
-        image: eliasandronikou/ue-simulator:latest  # Replace with your Docker image
+        image: eliasandronikou/ue-simulator:latest 
         env:
         - name: API_GATEWAY_URL
-          value: "http://api-gateway:8000"  # URL of the API Gateway
+          value: "http://api-gateway:8000"
       restartPolicy: Never
   backoffLimit: 4  # Number of retries in case of failure

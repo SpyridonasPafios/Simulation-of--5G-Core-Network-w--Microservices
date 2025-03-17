@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: auth-service
-        image: your-auth-service-image:latest
+        image: eliasandronikou/auth-service:latest
         env:
         - name: CPU_MULTIPLIER
           value: "1000"

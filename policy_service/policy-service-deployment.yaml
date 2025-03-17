@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: policy-service
-        image: your-policy-service-image:latest
+        image: eliasandronikou/policy-service:latest
         env:
         - name: CPU_MULTIPLIER
           value: "1000"

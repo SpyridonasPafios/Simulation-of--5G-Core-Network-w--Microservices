@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: resource-service
-        image: your-resource-service-image:latest
+        image: eliasandronikou/resource-service:latest
         env:
         - name: CPU_MULTIPLIER
           value: "1000"

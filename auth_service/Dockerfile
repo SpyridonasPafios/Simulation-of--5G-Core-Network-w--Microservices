@@ -2,10 +2,10 @@ FROM python:3.11.9
 
 WORKDIR /app
 
-COPY . .
+RUN pip install fastapi
 
-RUN pip install fastapi uvicorn requests
+COPY . .
 
 EXPOSE 8001
 
-CMD ["uvicorn", "auth_service:auth_service", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "main:auth_service", "--host", "0.0.0.0", "--port", "8001"]
