@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: policy-service
+  name: resource-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: policy-service
+      app: resource-service
   template:
     metadata:
       labels:
-        app: policy-service
+        app: resource-service
     spec:
       containers:
-      - name: policy-service
-        image: your-policy-service-image:latest
+      - name: resource-service
+        image: eliasandronikou/resource-service:latest
         env:
         - name: CPU_MULTIPLIER
           value: "1000"
@@ -22,20 +22,20 @@ spec:
           value: "1000000"
         resources:
           requests:
-            cpu: "400m"
+            cpu: "200m"
             memory: "256Mi"
           limits:
-            cpu: "2000m"
+            cpu: "1000m"
             memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: policy-service
+  name: resource-service
 spec:
   selector:
-    app: policy-service
+    app: resource-service
   ports:
   - protocol: TCP
-    port: 8003
-    targetPort: 8003
+    port: 8004
+    targetPort: 8004

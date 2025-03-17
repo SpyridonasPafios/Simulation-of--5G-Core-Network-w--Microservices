@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: session-service
+  name: data-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: session-service
+      app: data-service
   template:
     metadata:
       labels:
-        app: session-service
+        app: data-service
     spec:
       containers:
-      - name: session-service
-        image: your-session-service-image:latest
+      - name: data-service
+        image: eliasandronikou/data-service:latest
         env:
         - name: CPU_MULTIPLIER
           value: "1000"
@@ -22,20 +22,20 @@ spec:
           value: "1000000"
         resources:
           requests:
-            cpu: "300m"
+            cpu: "400m"
             memory: "512Mi"
           limits:
-            cpu: "1500m"
+            cpu: "2000m"
             memory: "1Gi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: session-service
+  name: data-service
 spec:
   selector:
-    app: session-service
+    app: data-service
   ports:
   - protocol: TCP
-    port: 8002
-    targetPort: 8002
+    port: 8005
+    targetPort: 8005
