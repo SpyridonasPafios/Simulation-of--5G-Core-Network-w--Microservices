@@ -18,10 +18,7 @@ This project simulates a User Equipment (UE) interacting with a set of microserv
 2. [Project Structure](#project-structure)
 3. [Setup and Deployment](#setup-and-deployment)
 4. [Running the System](#running-the-system)
-5. [Viewing Logs and Metrics](#viewing-logs-and-metrics)
-6. [Troubleshooting](#troubleshooting)
-7. [Contributing](#contributing)
-8. [License](#license)
+5. [Updates](#updates)
 
 ---
 
@@ -50,6 +47,30 @@ Before running the project, ensure you have the following installed:
 │   │   └── main.py              # Python code for Authentication Service
 │   ├── Dockerfile               # Dockerfile for Authentication Service
 │   └── auth-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+|
+├── session-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Session Manager
+│   ├── Dockerfile               # Dockerfile for Session Manager
+│   └── session-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── policy-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Policy Control Service
+│   ├── Dockerfile               # Dockerfile for Policy Control Service
+│   └── policy-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── resource-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Resource Manager
+│   ├── Dockerfile               # Dockerfile for Resource Manager
+│   └── resource-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│
+├── data-service/
+│   ├── app/
+│   │   └── main.py              # Python code for Data Forwarding Service
+│   ├── Dockerfile               # Dockerfile for Data Forwarding Service
+│   └── data-service-deployment.yaml  # Kubernetes Deployment and Service YAML
 │
 ├── ue-simulator/
 │   ├── app/
@@ -157,7 +178,7 @@ The `ue-simulator` will automatically start sending requests to the `api-gateway
 kubectl logs -f <ue-simulator-pod-name>
 ```
 
-## Clean ups
+### Clean ups
 
 ```bash
 kubectl delete -f api-gateway-deployment.yaml
