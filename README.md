@@ -178,24 +178,35 @@ The `ue-simulator` will automatically start sending requests to the `api-gateway
 kubectl logs -f <ue-simulator-pod-name>
 ```
 
-### Clean ups
+## Updates
+For each Microservice that changed run delete, then build and finally apply
+
+### Delete
 
 ```bash
-kubectl delete -f api-gateway-deployment.yaml
-kubectl delete -f auth-service-deployment.yaml
-kubectl delete -f session-service-deployment.yaml
-kubectl delete -f policy-service-deployment.yaml
-kubectl delete -f resource-service-deployment.yaml
-kubectl delete -f data-service-deployment.yaml
-kubectl delete -f ue-simulator.yaml
+kubectl delete -f api-gateway/api-gateway-deployment.yaml
+
+kubectl delete -f auth-service/auth-service-deployment.yaml
+
+kubectl delete -f session-service/session-service-deployment.yaml
+
+kubectl delete -f policy-service/policy-service-deployment.yaml
+
+kubectl delete -f resource-service/resource-service-deployment.yaml
+
+kubectl delete -f data-service/data-service-deployment.yaml
+
+kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 ```
+
+### Delete All
 ```bash
 kubectl delete pods --all -n default
 kubectl delete job ue-simulator
 ```
 
-## Updates
-For each file that changed run Delete from above then build and finally apply
+### Build
+
 ```bash
 cd api-gateway
 docker build -t eliasandronikou/api-gateway .
@@ -216,8 +227,11 @@ cd ../data-service
 docker build -t eliasandronikou/data-service .
 
 cd ../ue-simulator
-docker build -t ue-simulator:latest .
+docker build -t eliasandronikou/ue-simulator .
+
 ```
+
+### Apply
 ```bash
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
 
