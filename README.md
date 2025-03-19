@@ -124,8 +124,9 @@ docker push eliasandronikou/data-service:latest
 
 # Build UE Simulator
 cd ../ue-simulator
-docker build -t ue-simulator:latest .
+docker build -t eliasandronikou/ue-simulator .
 docker push eliasandronikou/ue-simulator:latest
+
 
 ```
 
@@ -179,7 +180,7 @@ kubectl logs -f <ue-simulator-pod-name>
 ```
 
 ## Updates
-For each Microservice that changed run delete, then build and finally apply
+For each Microservice that changed run Delete, then Build and finally Apply
 
 ### Delete
 
@@ -248,11 +249,3 @@ kubectl apply -f data-service/data-service-deployment.yaml
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
-```bash
-kubectl rollout restart deployment/api-gateway
-kubectl rollout restart deployment/auth-service
-kubectl rollout restart deployment/data-service
-kubectl rollout restart deployment/policy-service
-kubectl rollout restart deployment/resource-service
-kubectl rollout restart deployment/session-service
-```
