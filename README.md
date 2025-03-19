@@ -181,7 +181,7 @@ kubectl logs -f <ue-simulator-pod-name>
 ```
 
 ## Updates
-For each Microservice that changed run Delete, then Build and Apply. Finally go to Re-Run(#re-run)
+For each Microservice that changed run Delete, then Build and Apply. Finally go to [Re-Run](#re-run)
 
 ### Delete
 
