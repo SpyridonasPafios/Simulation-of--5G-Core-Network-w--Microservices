@@ -19,6 +19,7 @@ This project simulates a User Equipment (UE) interacting with a set of microserv
 3. [Setup and Deployment](#setup-and-deployment)
 4. [Running the System](#running-the-system)
 5. [Updates](#updates)
+6. [Re-Run](#re-run)
 
 ---
 
@@ -180,7 +181,7 @@ kubectl logs -f <ue-simulator-pod-name>
 ```
 
 ## Updates
-For each Microservice that changed run Delete, then Build and finally Apply
+For each Microservice that changed run Delete, then Build and Apply. Finally go to Re-Run(#re-run)
 
 ### Delete
 
@@ -203,7 +204,7 @@ kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 ### Delete All
 ```bash
 kubectl delete pods --all -n default
-kubectl delete job ue-simulator
+kubectl delete job --all
 ```
 
 ### Build
@@ -249,3 +250,11 @@ kubectl apply -f data-service/data-service-deployment.yaml
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
+## Re-Run
+
+```bash
+kubectl delete job ue-simulator
+kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
+kubectl get pods
+kubectl logs -f <ue-simulator-pod-name>
+```
