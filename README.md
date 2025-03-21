@@ -95,39 +95,31 @@ Build Docker images for all services:
 # Build API Gateway
 cd api-gateway
 docker build -t eliasandronikou/api-gateway .
-docker push eliasandronikou/api-gateway:latest
-
 
 # Build Auth Service
 cd ../auth-service
 docker build -t eliasandronikou/auth-service .
-docker push eliasandronikou/auth-service:latest
 
 # Build Session Service
 cd ../session-service
 docker build -t eliasandronikou/session-service .
-docker push eliasandronikou/session-service:latest
 
 # Build Policy Service
 cd ../policy-service
 docker build -t eliasandronikou/policy-service .
-docker push eliasandronikou/policy-service:latest
 
 # Build Resource Service
 cd ../resource-service
 docker build -t eliasandronikou/resource-service .
-docker push eliasandronikou/resource-service:latest
 
 # Build Data Service
 cd ../data-service
 docker build -t eliasandronikou/data-service .
-docker push eliasandronikou/data-service:latest
 
 # Build UE Simulator
 cd ../ue-simulator
 docker build -t eliasandronikou/ue-simulator .
-docker push eliasandronikou/ue-simulator:latest
-
+cd ..
 
 ```
 
@@ -181,7 +173,7 @@ kubectl logs -f <ue-simulator-pod-name>
 ```
 
 ## Updates
-For each Microservice that changed run Delete, then Build and Apply. Finally go to [Re-Run](#re-run)
+For each Microservice that changed run Delete, then Build & Push and Apply. Finally go to [Re-Run](#re-run)
 
 ### Delete
 
@@ -207,29 +199,50 @@ kubectl delete pods --all -n default
 kubectl delete job --all
 ```
 
-### Build
+### Build & PUSH
 
 ```bash
+# Build API Gateway
 cd api-gateway
 docker build -t eliasandronikou/api-gateway .
+docker push eliasandronikou/api-gateway:latest
+cd ..
 
-cd ../auth-service
+# Build Auth Service
+cd auth-service
 docker build -t eliasandronikou/auth-service .
+docker push eliasandronikou/auth-service:latest
+cd ..
 
-cd ../session-service
+# Build Session Service
+cd session-service
 docker build -t eliasandronikou/session-service .
+docker push eliasandronikou/session-service:latest
+cd ..
 
-cd ../policy-service
+# Build Policy Service
+cd policy-service
 docker build -t eliasandronikou/policy-service .
+docker push eliasandronikou/policy-service:latest
+cd ..
 
-cd ../resource-service
+# Build Resource Service
+cd resource-service
 docker build -t eliasandronikou/resource-service .
+docker push eliasandronikou/resource-service:latest
+cd ..
 
-cd ../data-service
+# Build Data Service
+cd data-service
 docker build -t eliasandronikou/data-service .
+docker push eliasandronikou/data-service:latest
+cd ..
 
-cd ../ue-simulator
+# Build UE Simulator
+cd ue-simulator
 docker build -t eliasandronikou/ue-simulator .
+docker push eliasandronikou/ue-simulator:latest
+cd ..
 
 ```
 
