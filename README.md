@@ -199,7 +199,7 @@ kubectl delete pods --all -n default
 kubectl delete job --all
 ```
 
-### Build & PUSH
+### Build & PUSH (PUSH is only allowed in authorized accounts)
 
 ```bash
 # Build API Gateway
