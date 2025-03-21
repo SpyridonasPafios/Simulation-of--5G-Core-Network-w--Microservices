@@ -19,11 +19,13 @@ def ue_simulator(request_type, load_factor):
 
 if __name__ == "__main__":
     results = []
-    for req_type in ["registration", "session_establishment", "data_transfer"]:
-        load_factor = random.randint(1, 5)
-        result, latency = ue_simulator(req_type, load_factor)
-        if latency:
-            results.append((req_type, load_factor, latency))
+    for i in range(6):
+        for req_type in ["registration", "session_establishment", "data_transfer"]:
+            load_factor = random.randint(1, 5)
+            result, latency = ue_simulator(req_type, load_factor)
+            if latency:
+             results.append((req_type, load_factor, latency))
+    
 
     # Print summary
     if results:
