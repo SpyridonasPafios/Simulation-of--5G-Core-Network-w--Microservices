@@ -38,6 +38,9 @@ async def handle_request(request: dict):
     load_factor = request.get("load_factor", 1)
     logger.info(f"Received request: {request}")
     
+    stress_cpu(1, load_factor)
+    stress_ram(1, load_factor)
+
     try:
         if request_type == "registration":
             auth_resp = requests.post(f"{MICROSERVICES['auth']}/authenticate", json=request).json()

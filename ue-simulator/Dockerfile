@@ -2,7 +2,7 @@ FROM python:3.11.9
 
 WORKDIR /app
 
-RUN pip install requests
+RUN pip install fastapi uvicorn requests
 
 COPY . .
 
