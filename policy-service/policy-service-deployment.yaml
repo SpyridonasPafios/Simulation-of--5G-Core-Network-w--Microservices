@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: policy-service
+  namespace: embb
 spec:
   replicas: 1
   selector:
@@ -32,6 +33,95 @@ apiVersion: v1
 kind: Service
 metadata:
   name: policy-service
+  namespace: embb
+spec:
+  selector:
+    app: policy-service
+  ports:
+  - protocol: TCP
+    port: 8003
+    targetPort: 8003
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-service
+  namespace: massive-iot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-service
+  template:
+    metadata:
+      labels:
+        app: policy-service
+    spec:
+      containers:
+      - name: policy-service
+        image: eliasandronikou/policy-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        resources:
+          requests:
+            cpu: "400m"
+            memory: "256Mi"
+          limits:
+            cpu: "800m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-service
+  namespace: massive-iot
+spec:
+  selector:
+    app: policy-service
+  ports:
+  - protocol: TCP
+    port: 8003
+    targetPort: 8003
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-service
+  namespace: urllc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-service
+  template:
+    metadata:
+      labels:
+        app: policy-service
+    spec:
+      containers:
+      - name: policy-service
+        image: eliasandronikou/policy-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        resources:
+          requests:
+            cpu: "400m"
+            memory: "256Mi"
+          limits:
+            cpu: "800m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-service
+  namespace: urllc
 spec:
   selector:
     app: policy-service

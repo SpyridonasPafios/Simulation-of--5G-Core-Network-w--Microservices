@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: resource-service
+  namespace: embb
 spec:
   replicas: 1
   selector:
@@ -32,6 +33,95 @@ apiVersion: v1
 kind: Service
 metadata:
   name: resource-service
+  namespace: embb
+spec:
+  selector:
+    app: resource-service
+  ports:
+  - protocol: TCP
+    port: 8004
+    targetPort: 8004
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-service
+  namespace: massive-iot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-service
+  template:
+    metadata:
+      labels:
+        app: resource-service
+    spec:
+      containers:
+      - name: resource-service
+        image: eliasandronikou/resource-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-service
+  namespace: massive-iot
+spec:
+  selector:
+    app: resource-service
+  ports:
+  - protocol: TCP
+    port: 8004
+    targetPort: 8004
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-service
+  namespace: urllc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-service
+  template:
+    metadata:
+      labels:
+        app: resource-service
+    spec:
+      containers:
+      - name: resource-service
+        image: eliasandronikou/resource-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        resources:
+          requests:
+            cpu: "200m"
+            memory: "256Mi"
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-service
+  namespace: urllc
 spec:
   selector:
     app: resource-service
