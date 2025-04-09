@@ -114,7 +114,7 @@ spec:
         - name: RAM_MULTIPLIER
           value: "1000000"
         - name: SLICE_TYPE
-          value: "urllc"  # Slice type for URLLC
+          value: "urllc"  
         resources:
           requests:
             cpu: "400m"
