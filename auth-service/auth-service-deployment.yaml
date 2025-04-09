@@ -71,10 +71,10 @@ spec:
           value: "massive-iot"
         resources:
           requests:
-            cpu: "150m"
+            cpu: "100m"
             memory: "128Mi"
           limits:
-            cpu: "300m"
+            cpu: "200m"
             memory: "256Mi"
 ---
 apiVersion: v1
@@ -117,8 +117,8 @@ spec:
           value: "urllc"
         resources:
           requests:
-            cpu: "150m"
-            memory: "128Mi"
+            cpu: "300m"
+            memory: "256Mi"
           limits:
             cpu: "300m"
             memory: "256Mi"

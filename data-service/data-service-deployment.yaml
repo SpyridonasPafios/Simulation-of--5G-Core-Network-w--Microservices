@@ -25,11 +25,11 @@ spec:
           value: "embb"  # Slice type for eMBB
         resources:
           requests:
-            cpu: "200m"
-            memory: "192Mi"
+            cpu: "300m"
+            memory: "256Mi"
           limits:
-            cpu: "400m"
-            memory: "384Mi"
+            cpu: "600m"
+            memory: "512Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -71,11 +71,11 @@ spec:
           value: "massive-iot"  # Slice type for Massive IoT
         resources:
           requests:
-            cpu: "200m"
-            memory: "192Mi"
+            cpu: "150m"
+            memory: "128Mi"
           limits:
-            cpu: "400m"
-            memory: "384Mi"
+            cpu: "300m"
+            memory: "256Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -117,8 +117,8 @@ spec:
           value: "urllc"  # Slice type for URLLC
         resources:
           requests:
-            cpu: "200m"
-            memory: "192Mi"
+            cpu: "400m"
+            memory: "384Mi"
           limits:
             cpu: "400m"
             memory: "384Mi"
