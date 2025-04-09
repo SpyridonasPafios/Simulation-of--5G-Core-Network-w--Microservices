@@ -1,6 +1,7 @@
 import requests
 import time
 import random
+import os
 import traceback
 from datetime import datetime
 
@@ -13,7 +14,8 @@ def ue_simulator(request_type, load_factor, slice_type):
 
         print(f"[DEBUG] Sending request to: {gateway_url}")
 
-        response = requests.post(gateway_url, json=request)        response.raise_for_status()
+        response = requests.post(gateway_url, json=request)
+        response.raise_for_status()
         end_time = time.time()
         return response.json(), end_time - start_time
     except Exception as e:
