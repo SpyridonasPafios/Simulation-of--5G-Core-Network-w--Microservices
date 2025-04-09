@@ -22,13 +22,13 @@ spec:
         - name: RAM_MULTIPLIER
           value: "1000000"
         - name: SLICE_TYPE
-          value: "embb"  # Slice type for eMBB
+          value: "embb"
         resources:
           requests:
-            cpu: "200m"
+            cpu: "400m"
             memory: "256Mi"
           limits:
-            cpu: "500m"
+            cpu: "600m"
             memory: "512Mi"
 ---
 apiVersion: v1
@@ -68,14 +68,14 @@ spec:
         - name: RAM_MULTIPLIER
           value: "1000000"
         - name: SLICE_TYPE
-          value: "massive-iot"  # Slice type for Massive IoT
+          value: "massive-iot"
         resources:
           requests:
             cpu: "200m"
-            memory: "256Mi"
+            memory: "192Mi"
           limits:
-            cpu: "500m"
-            memory: "512Mi"
+            cpu: "400m"
+            memory: "384Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -114,13 +114,13 @@ spec:
         - name: RAM_MULTIPLIER
           value: "1000000"
         - name: SLICE_TYPE
-          value: "urllc"  # Slice type for URLLC
+          value: "urllc"
         resources:
           requests:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "400m"
+            memory: "512Mi"
           limits:
-            cpu: "500m"
+            cpu: "400m"
             memory: "512Mi"
 ---
 apiVersion: v1
@@ -133,6 +133,5 @@ spec:
     app: resource-service
   ports:
   - protocol: TCP
-
     port: 8004
     targetPort: 8004

@@ -25,11 +25,11 @@ spec:
           value: "embb"  # Slice type for eMBB
         resources:
           requests:
-            cpu: "150m" # Halved from 300m
-            memory: "192Mi" # Halved from 384Mi
+            cpu: "300m" # Updated from 150m
+            memory: "192Mi" # No change
           limits:
-            cpu: "300m" # Halved from 600m
-            memory: "384Mi" # Halved from 768Mi
+            cpu: "500m" # Updated from 300m
+            memory: "384Mi" # No change
 ---
 apiVersion: v1
 kind: Service
@@ -71,11 +71,11 @@ spec:
           value: "massive-iot"  # Slice type for Massive IoT
         resources:
           requests:
-            cpu: "150m" # Halved from 300m
-            memory: "192Mi" # Halved from 384Mi
+            cpu: "150m" # No change
+            memory: "128Mi" # Updated from 192Mi
           limits:
-            cpu: "300m" # Halved from 600m
-            memory: "384Mi" # Halved from 768Mi
+            cpu: "300m" # No change
+            memory: "256Mi" # Updated from 384Mi
 ---
 apiVersion: v1
 kind: Service
@@ -117,11 +117,11 @@ spec:
           value: "urllc"  # Slice type for URLLC
         resources:
           requests:
-            cpu: "150m" # Halved from 300m
-            memory: "192Mi" # Halved from 384Mi
+            cpu: "400m" # Updated from 150m
+            memory: "384Mi" # Updated from 192Mi
           limits:
-            cpu: "300m" # Halved from 600m
-            memory: "384Mi" # Halved from 768Mi
+            cpu: "400m" # Requests == Limits
+            memory: "384Mi" # Requests == Limits
 ---
 apiVersion: v1
 kind: Service
