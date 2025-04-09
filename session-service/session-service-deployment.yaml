@@ -21,6 +21,8 @@ spec:
           value: "1000"
         - name: RAM_MULTIPLIER
           value: "1000000"
+        - name: SLICE_TYPE
+          value: "embb"  # Slice type for eMBB
         resources:
           requests:
             cpu: "150m" # Halved from 300m
@@ -65,6 +67,8 @@ spec:
           value: "1000"
         - name: RAM_MULTIPLIER
           value: "1000000"
+        - name: SLICE_TYPE
+          value: "massive-iot"  # Slice type for Massive IoT
         resources:
           requests:
             cpu: "150m" # Halved from 300m
@@ -109,6 +113,8 @@ spec:
           value: "1000"
         - name: RAM_MULTIPLIER
           value: "1000000"
+        - name: SLICE_TYPE
+          value: "urllc"  # Slice type for URLLC
         resources:
           requests:
             cpu: "150m" # Halved from 300m
