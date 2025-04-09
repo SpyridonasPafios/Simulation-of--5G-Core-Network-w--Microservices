@@ -118,10 +118,10 @@ spec:
         resources:
           requests:
             cpu: "400m" # Updated from 150m
-            memory: "384Mi" # Updated from 192Mi
+            memory: "256Mi" # Updated from 192Mi
           limits:
             cpu: "400m" # Requests == Limits
-            memory: "384Mi" # Requests == Limits
+            memory: "256Mi" # Requests == Limits
 ---
 apiVersion: v1
 kind: Service

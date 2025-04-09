@@ -42,6 +42,6 @@ metadata:
   namespace: urllc
 spec:
   hard:
-    cpu: "3"
-    memory: "6Gi"
-    pods: "20"
+    cpu: "4"
+    memory: "8Gi"
+    pods: "25"
