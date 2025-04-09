@@ -23,11 +23,11 @@ spec:
           value: "1000000"
         resources:
           requests:
+            cpu: "200m"
+            memory: "192Mi"
+          limits:
             cpu: "400m"
             memory: "384Mi"
-          limits:
-            cpu: "800m"
-            memory: "768Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -67,11 +67,11 @@ spec:
           value: "1000000"
         resources:
           requests:
+            cpu: "200m"
+            memory: "192Mi"
+          limits:
             cpu: "400m"
             memory: "384Mi"
-          limits:
-            cpu: "800m"
-            memory: "768Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -111,11 +111,11 @@ spec:
           value: "1000000"
         resources:
           requests:
+            cpu: "200m"
+            memory: "192Mi"
+          limits:
             cpu: "400m"
             memory: "384Mi"
-          limits:
-            cpu: "800m"
-            memory: "768Mi"
 ---
 apiVersion: v1
 kind: Service

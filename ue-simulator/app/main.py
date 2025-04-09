@@ -1,53 +1,34 @@
 import requests
 import time
 import random
+import traceback
 from datetime import datetime
 
-def ue_simulator(request_type, load_factor):
-    request = {"type": request_type, "load_factor": load_factor}
+def ue_simulator(request_type, load_factor, slice_type):
+    request = {"type": request_type, "load_factor": load_factor, "slice": slice_type}
     start_time = time.time()
     try:
-        response = requests.post("http://api-gateway:8000/api/request", json=request)
-        response.raise_for_status()
+        namespace = os.getenv("SLICE_TYPE", "embb")
+        gateway_url = f"http://api-gateway.{namespace}.svc.cluster.local:8000/api/request"
+
+        print(f"[DEBUG] Sending request to: {gateway_url}")
+
+        response = requests.post(gateway_url, json=request)        response.raise_for_status()
         end_time = time.time()
-        latency = end_time - start_time
-        print(f"[{datetime.now()}] Request: {request_type}, Load Factor: {load_factor}, Response: {response.json()}, Latency: {latency:.3f}s")
-        return response.json(), latency
-    except requests.exceptions.RequestException as e:
-        print(f"[{datetime.now()}] Request failed: {request_type}, Load Factor: {load_factor}, Error: {str(e)}")
-        return {"error": str(e)}, None
+        return response.json(), end_time - start_time
+    except Exception as e:
+        print(f"[ERROR] Request failed: {str(e)}")
+        traceback.print_exc()
 
 if __name__ == "__main__":
-    results = []
-    for i in range(1,6):
-        for req_type in ["registration", "session_establishment", "data_transfer"]:
-            load_factor = i
-            result, latency = ue_simulator(req_type, load_factor)
-            if latency:
-             results.append((req_type, load_factor, latency))
-    
+    slice_types = {
+        "embb": {"load_factor": 5, "frequency": 2},        # Βαρύ φορτίο, λίγα requests
+        "massive-iot": {"load_factor": 1, "frequency": 10}, # Ελαφρύ φορτίο, πολλά requests
+        "urllc": {"load_factor": 3, "frequency": 5}        # Μέτριο φορτίο, μέτρια requests
+    }
 
-    # Print summary
-    if results:
-        # Print summary with averages per load factor
-        from collections import defaultdict
-        load_factor_results = defaultdict(list)
-        
-        for req_type, load_factor, latency in results:
-            load_factor_results[load_factor].append((req_type, latency))
-        
-        # Print per load factor
-        for load_factor in sorted(load_factor_results.keys()):
-            print(f"\nLoad Factor: {load_factor}")
-            total_latency = 0
-            
-            for req_type, latency in load_factor_results[load_factor]:
-                print(f"Request: {req_type}, Latency: {latency:.3f}s")
-                total_latency += latency
-            
-            avg_latency = total_latency / len(load_factor_results[load_factor])
-            print(f"Average Latency for Load Factor {load_factor}: {avg_latency:.3f}s")
-        
-        # Print overall average
-        overall_avg = sum(latency for _, _, latency in results) / len(results)
-        print(f"\nOverall Average Latency: {overall_avg:.3f}s")
+    for slice_type, config in slice_types.items():
+        for _ in range(config["frequency"]):
+            result, latency = ue_simulator("registration", config["load_factor"], slice_type)
+            print(f"Slice: {slice_type}, Response: {result}, Latency: {latency:.3f}s" if latency else "Request failed")
+            time.sleep(1)  # Μικρή καθυστέρηση μεταξύ των requests

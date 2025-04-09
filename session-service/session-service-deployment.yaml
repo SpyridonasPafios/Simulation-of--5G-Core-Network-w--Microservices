@@ -23,11 +23,11 @@ spec:
           value: "1000000"
         resources:
           requests:
-            cpu: "300m"
-            memory: "384Mi"
+            cpu: "150m" # Halved from 300m
+            memory: "192Mi" # Halved from 384Mi
           limits:
-            cpu: "600m"
-            memory: "768Mi"
+            cpu: "300m" # Halved from 600m
+            memory: "384Mi" # Halved from 768Mi
 ---
 apiVersion: v1
 kind: Service
@@ -67,11 +67,11 @@ spec:
           value: "1000000"
         resources:
           requests:
-            cpu: "300m"
-            memory: "384Mi"
+            cpu: "150m" # Halved from 300m
+            memory: "192Mi" # Halved from 384Mi
           limits:
-            cpu: "600m"
-            memory: "768Mi"
+            cpu: "300m" # Halved from 600m
+            memory: "384Mi" # Halved from 768Mi
 ---
 apiVersion: v1
 kind: Service
@@ -111,11 +111,11 @@ spec:
           value: "1000000"
         resources:
           requests:
-            cpu: "300m"
-            memory: "384Mi"
+            cpu: "150m" # Halved from 300m
+            memory: "192Mi" # Halved from 384Mi
           limits:
-            cpu: "600m"
-            memory: "768Mi"
+            cpu: "300m" # Halved from 600m
+            memory: "384Mi" # Halved from 768Mi
 ---
 apiVersion: v1
 kind: Service

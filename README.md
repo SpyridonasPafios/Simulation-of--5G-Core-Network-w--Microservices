@@ -271,3 +271,11 @@ kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 kubectl get pods
 kubectl logs -f <ue-simulator-pod-name>
 ```
+
+## Network slicing
+```bash
+kubectl apply -f slices\namespaces.yaml
+kubectl get pods -n embb
+kubectl get pods -n massive-iot
+kubectl get pods -n urllc
+```
