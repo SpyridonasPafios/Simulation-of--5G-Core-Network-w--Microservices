@@ -1,35 +1,39 @@
-# UE Simulator with Microservices
+# UE Simulator with Microservices & Network Slicing
 
-This project simulates a User Equipment (UE) interacting with a set of microservices via an API Gateway. The system includes the following components:
+This project simulates a User Equipment (UE) interacting with microservices within distinct network slices via an API Gateway. The system includes the following components:
 
-- **UE Simulator**: Simulates requests to the API Gateway.
-- **API Gateway**: Routes requests to the appropriate microservices.
-- **Auth Service**: Handles authentication requests.
-- **Session Service**: Manages session establishment.
-- **Policy Service**: Applies policies.
-- **Resource Service**: Allocates resources.
-- **Data Service**: Handles data transfer requests.
+- **UE Simulator**: Simulates user equipment requests.
+- **API Gateway**: Forwards requests to specific services based on routing logic.
+- **Auth Service**: Handles authentication workflows.
+- **Session Service**: Establishes and manages sessions.
+- **Policy Service**: Enforces slice-specific policies.
+- **Resource Service**: Allocates network or compute resources.
+- **Data Service**: Manages data transfer sessions.
+
+Each service can exist in different namespaces (e.g. `embb`, `massive-iot`, `urllc`) to simulate network slicing.
 
 ---
 
 ## Table of Contents
 
-1. [Prerequisites](#prerequisites)
-2. [Project Structure](#project-structure)
-3. [Setup and Deployment](#setup-and-deployment)
-4. [Running the System](#running-the-system)
-5. [Updates](#updates)
-6. [Re-Run](#re-run)
+1. [Prerequisites](#prerequisites)  
+2. [Project Structure](#project-structure)  
+3. [Setup and Deployment](#setup-and-deployment)  
+4. [Running the System](#running-the-system)  
+5. [Updates](#updates)  
+6. [Re-Run](#re-run)  
+7. [Network Slicing](#network-slicing)
 
 ---
 
 ## Prerequisites
 
-Before running the project, ensure you have the following installed:
+Ensure the following are installed and working:
 
-- **Docker**: [Install Docker](https://docs.docker.com/get-docker/)
-- **Kubernetes**: [Install Minikube](https://minikube.sigs.k8s.io/docs/start/) or use a Kubernetes cluster.
+- **Docker**: [Get Docker](https://docs.docker.com/get-docker/)
+- **Minikube**: [Install Minikube](https://minikube.sigs.k8s.io/docs/start/)
 - **kubectl**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/)
+- (Optional) **DockerHub Account** if pushing images
 
 ---
 
@@ -38,49 +42,44 @@ Before running the project, ensure you have the following installed:
 ```
 .
 ├── api-gateway/
-│   ├── app/
-│   │   └── main.py              # Python code for API Gateway
-│   ├── Dockerfile               # Dockerfile for API Gateway
-│   └── api-gateway-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── api-gateway-deployment.yaml
 │
 ├── auth-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Authentication Service
-│   ├── Dockerfile               # Dockerfile for Authentication Service
-│   └── auth-service-deployment.yaml  # Kubernetes Deployment and Service YAML
-|
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── auth-service-deployment.yaml
+│
 ├── session-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Session Manager
-│   ├── Dockerfile               # Dockerfile for Session Manager
-│   └── session-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── session-service-deployment.yaml
 │
 ├── policy-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Policy Control Service
-│   ├── Dockerfile               # Dockerfile for Policy Control Service
-│   └── policy-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── policy-service-deployment.yaml
 │
 ├── resource-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Resource Manager
-│   ├── Dockerfile               # Dockerfile for Resource Manager
-│   └── resource-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── resource-service-deployment.yaml
 │
 ├── data-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Data Forwarding Service
-│   ├── Dockerfile               # Dockerfile for Data Forwarding Service
-│   └── data-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── data-service-deployment.yaml
 │
 ├── ue-simulator/
-│   ├── app/
-│   │   └── main.py              # Python code for UE Simulator
-│   ├── Dockerfile               # Dockerfile for UE Simulator
-│   └── ue-simulator-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── ue-simulator-deployment.yaml
 │
-└── README.md                    # This file
-
+├── slices/
+│   └── namespaces.yaml
+│
+└── README.md
 ```
 
 ---
@@ -88,8 +87,6 @@ Before running the project, ensure you have the following installed:
 ## Setup and Deployment
 
 ### 1. Build Docker Images
-
-Build Docker images for all services:
 
 ```bash
 # Build API Gateway
@@ -125,81 +122,65 @@ cd ..
 
 ### 2. Deploy to Kubernetes
 
-Deploy the services to your Kubernetes cluster:
-
 ```bash
-# Start Minikube  
+# Start Minikube
 minikube start
 
-# Deploy API Gateway
+# Apply network slice namespaces
+kubectl apply -f slices/namespaces.yaml
+
+# Deploy all services
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
-
-# Deploy Auth Service
 kubectl apply -f auth-service/auth-service-deployment.yaml
-
-# Deploy Session Service
 kubectl apply -f session-service/session-service-deployment.yaml
-
-# Deploy Policy Service
 kubectl apply -f policy-service/policy-service-deployment.yaml
-
-# Deploy Resource Service
 kubectl apply -f resource-service/resource-service-deployment.yaml
-
-# Deploy Data Service
 kubectl apply -f data-service/data-service-deployment.yaml
-
-# Deploy UE Simulator
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
-### 3. Verify Deployment
-
-Check that all pods are running:
+### 3. Verify Pods
 
 ```bash
-kubectl get pods
-kubectl get jobs
+kubectl get pods -A
 ```
 
 ---
 
 ## Running the System
 
-The `ue-simulator` will automatically start sending requests to the `api-gateway`. You can view the logs to see the results:
+UE Simulator will start sending requests on deploy. You can monitor logs:
 
 ```bash
 kubectl logs -f <ue-simulator-pod-name>
 ```
 
+---
+
 ## Updates
-For each Microservice that changed run Delete, then Build & Push and Apply. Finally go to [Re-Run](#re-run)
+
+When making code changes:
 
 ### Delete
 
 ```bash
 kubectl delete -f api-gateway/api-gateway-deployment.yaml
-
 kubectl delete -f auth-service/auth-service-deployment.yaml
-
 kubectl delete -f session-service/session-service-deployment.yaml
-
 kubectl delete -f policy-service/policy-service-deployment.yaml
-
 kubectl delete -f resource-service/resource-service-deployment.yaml
-
 kubectl delete -f data-service/data-service-deployment.yaml
-
 kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
-### Delete All
+### Delete All (optional clean state)
+
 ```bash
-kubectl delete pods --all -n default
+kubectl delete pods --all
 kubectl delete job --all
 ```
 
-### Build & PUSH (PUSH is only allowed in authorized accounts)
+### Build & Push
 
 ```bash
 # Build API Gateway
@@ -247,23 +228,22 @@ cd ..
 ```
 
 ### Apply
+
 ```bash
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
-
 kubectl apply -f auth-service/auth-service-deployment.yaml
-
 kubectl apply -f session-service/session-service-deployment.yaml
-
 kubectl apply -f policy-service/policy-service-deployment.yaml
-
 kubectl apply -f resource-service/resource-service-deployment.yaml
-
 kubectl apply -f data-service/data-service-deployment.yaml
-
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
+---
+
 ## Re-Run
+
+To re-trigger UE simulation:
 
 ```bash
 kubectl delete job ue-simulator
@@ -272,10 +252,16 @@ kubectl get pods
 kubectl logs -f <ue-simulator-pod-name>
 ```
 
-## Network slicing
+---
+
+## Network Slicing
+
+To observe services within each network slice:
+
 ```bash
-kubectl apply -f slices\namespaces.yaml
 kubectl get pods -n embb
 kubectl get pods -n massive-iot
 kubectl get pods -n urllc
 ```
+
+---
