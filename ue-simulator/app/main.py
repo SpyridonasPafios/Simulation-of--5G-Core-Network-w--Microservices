@@ -1,51 +1,61 @@
-import requests
+import asyncio
 import time
-import random
+import httpx
 import os
 import traceback
-from datetime import datetime
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
-def ue_simulator(request_type, load_factor, slice_type):
+requests_sent = {"embb": 0, "massive-iot": 0, "urllc": 0}
+latency_per_slice = {"embb": [], "massive-iot": [], "urllc": []}
+
+async def ue_simulator(request_type, load_factor, slice_type):
     request = {"type": request_type, "load_factor": load_factor, "slice": slice_type}
-    start_time = time.time()
+    namespace = os.getenv("SLICE_TYPE", slice_type)
+    gateway_url = f"http://api-gateway.{namespace}.svc.cluster.local:8000/api/request"
     try:
-        namespace = slice_type  # Use the slice name directly for namespace
-        gateway_url = f"http://api-gateway.{namespace}.svc.cluster.local:8000/api/request"
-        print(f"[DEBUG] Sending request to: {gateway_url}")
-        response = requests.post(gateway_url, json=request)
+        start = time.time()
+        async with httpx.AsyncClient(timeout=100.0) as client:
+            response = await client.post(gateway_url, json=request)
         response.raise_for_status()
-        end_time = time.time()
-        return slice_type, response.json(), end_time - start_time
+        end = time.time()
+        latency = end - start
+        return response.json(), latency
     except Exception as e:
-        print(f"[ERROR] Request failed for slice {slice_type}: {str(e)}")
+        print(f"[ERROR][{slice_type}] Request failed: {str(e)}")
         traceback.print_exc()
-        return slice_type, None, None
+        return None, None
 
-if __name__ == "__main__":
-    slice_types = {
-        "embb": {"load_factor": 5, "frequency": 2},
+async def send_requests_once(slice_type, load_factor, frequency):
+    global requests_sent
+    tasks = [asyncio.create_task(ue_simulator("registration", load_factor, slice_type)) for _ in range(frequency)]
+    results = await asyncio.gather(*tasks)
+    for res, latency in results:
+        if latency is not None:
+            latency_per_slice[slice_type].append(latency)
+            requests_sent[slice_type] += 1
+
+async def main():
+    # Adjust these parameters
+    test_rounds = 3
+    config = {
+        "embb": {"load_factor": 4, "frequency": 2},
         "massive-iot": {"load_factor": 1, "frequency": 10},
         "urllc": {"load_factor": 3, "frequency": 5}
     }
 
-    # Use ThreadPoolExecutor to send concurrent requests
-    with ThreadPoolExecutor(max_workers=20) as executor:
-        future_to_slice = []
+    for round_num in range(test_rounds):
+        print(f"\n🚀 Starting test round {round_num + 1}")
+        await asyncio.gather(*[
+            send_requests_once(slice, conf["load_factor"], conf["frequency"])
+            for slice, conf in config.items()
+        ])
+        await asyncio.sleep(1)  # short pause between rounds
 
-        for slice_type, config in slice_types.items():
-            for _ in range(config["frequency"]):
-                future = executor.submit(
-                    ue_simulator,
-                    request_type="registration",
-                    load_factor=config["load_factor"],
-                    slice_type=slice_type
-                )
-                future_to_slice.append(future)
+    # Summary
+    print("\n✅ TEST COMPLETED. Results:")
+    for slice_type in requests_sent:
+        rps = requests_sent[slice_type] / test_rounds
+        avg_latency = sum(latency_per_slice[slice_type]) / len(latency_per_slice[slice_type]) if latency_per_slice[slice_type] else 0
+        print(f"[{slice_type.upper()}] Total Requests: {requests_sent[slice_type]}, RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
 
-        for future in as_completed(future_to_slice):
-            slice_type, result, latency = future.result()
-            if latency is not None:
-                print(f"✅ Slice: {slice_type}, Latency: {latency:.3f}s, Response: {result}")
-            else:
-                print(f"❌ Slice: {slice_type}, Request failed.")
+if __name__ == "__main__":
+    asyncio.run(main())

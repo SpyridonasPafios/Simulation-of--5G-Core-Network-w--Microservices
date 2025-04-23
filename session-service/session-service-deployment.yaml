@@ -26,10 +26,10 @@ spec:
         resources:
           requests:
             cpu: "300m" # Updated from 150m
-            memory: "192Mi" # No change
+            memory: "128Mi" # No change
           limits:
             cpu: "500m" # Updated from 300m
-            memory: "384Mi" # No change
+            memory: "256Mi" # No change
 ---
 apiVersion: v1
 kind: Service
