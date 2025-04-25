@@ -58,4 +58,6 @@ async def main():
         print(f"[{slice_type.upper()}] Total Requests: {requests_sent[slice_type]}, RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
 
 if __name__ == "__main__":
+    start_http_server(3000)
     asyncio.run(main())
+    sys.exit(0)
