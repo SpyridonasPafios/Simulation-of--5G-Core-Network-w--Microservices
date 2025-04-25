@@ -198,7 +198,7 @@ Default login:
 ### 2. Import Dashboards
 
 - Navigate to Grafana → Dashboards → Import
-- Use dashboard IDs or JSON definitions (can be shared separately)
+- 5G Slicing Monitoring Dashboard-1745591109882.json
 
 
 ### 3. Verify Pods

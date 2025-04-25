@@ -4,8 +4,6 @@ import os
 
 session_service = FastAPI()
 
-Instrumentator().instrument(session_service).expose(session_service, endpoint="/metrics")
-
 def compute_pi(n):
     pi = 0.0
     for k in range(n):
@@ -29,3 +27,5 @@ async def start_session(request: dict):
 @session_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(session_service).expose(session_service, endpoint="/metrics")

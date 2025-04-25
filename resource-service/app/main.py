@@ -4,10 +4,6 @@ import os
 
 resource_service = FastAPI()
 
-# Prometheus metrics setup
-Instrumentator().instrument(resource_service).expose(resource_service, endpoint="/metrics")
-
-
 def compute_pi(n):
     pi = 0.0
     for k in range(n):
@@ -31,3 +27,5 @@ async def allocate_resources(request: dict):
 @resource_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(resource_service).expose(resource_service, endpoint="/metrics")

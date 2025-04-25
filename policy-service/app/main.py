@@ -4,9 +4,6 @@ import os
 
 policy_service = FastAPI()
 
-# Prometheus metrics setup
-Instrumentator().instrument(policy_service).expose(policy_service, endpoint="/metrics")
-
 def compute_pi(n):
     pi = 0.0
     for k in range(n):
@@ -30,3 +27,5 @@ async def apply_policy(request: dict):
 @policy_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(policy_service).expose(policy_service, endpoint="/metrics")

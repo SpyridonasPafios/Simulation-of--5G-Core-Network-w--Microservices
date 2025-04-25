@@ -4,9 +4,6 @@ import os
 
 data_service = FastAPI()
 
-# Prometheus metrics setup
-Instrumentator().instrument(data_service).expose(data_service, endpoint="/metrics")
-
 def compute_pi(n):
     pi = 0.0
     for k in range(n):
@@ -30,3 +27,5 @@ async def forward_data(request: dict):
 @data_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(data_service).expose(data_service, endpoint="/metrics")

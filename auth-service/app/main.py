@@ -4,9 +4,6 @@ import os
 
 auth_service = FastAPI()
 
-Instrumentator().instrument(auth_service).expose(auth_service, endpoint="/metrics")
-
-
 def compute_pi(n):
     pi = 0.0
     for k in range(n):
@@ -30,3 +27,5 @@ async def authenticate(request: dict):
 @auth_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(auth_service).expose(auth_service, endpoint="/metrics")
