@@ -1,0 +1,3 @@
+[wsl2]
+memory=6GB   # Max RAM
+processors=4 # Number of CPUs
