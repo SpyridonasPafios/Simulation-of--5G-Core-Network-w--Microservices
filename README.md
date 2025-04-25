@@ -1,14 +1,6 @@
 # UE Simulator with Microservices & Network Slicing
 
-This project simulates a User Equipment (UE) interacting with microservices within distinct network slices via an API Gateway. The system includes the following components:
-
-- **UE Simulator**: Simulates user equipment requests.
-- **API Gateway**: Forwards requests to specific services based on routing logic.
-- **Auth Service**: Handles authentication workflows.
-- **Session Service**: Establishes and manages sessions.
-- **Policy Service**: Enforces slice-specific policies.
-- **Resource Service**: Allocates network or compute resources.
-- **Data Service**: Manages data transfer sessions.
+This project simulates **User Equipment (UE)** interacting with a suite of microservices through an API Gateway. Services are separated into **network slices** via Kubernetes namespaces (`embb`, `massive-iot`, `urllc`) to emulate 5G slicing behavior. The system includes integrated **observability with Prometheus & Grafana**.
 
 Each service can exist in different namespaces (e.g. `embb`, `massive-iot`, `urllc`) to simulate network slicing.
 
@@ -17,23 +9,52 @@ Each service can exist in different namespaces (e.g. `embb`, `massive-iot`, `url
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)  
-2. [Project Structure](#project-structure)  
-3. [Setup and Deployment](#setup-and-deployment)  
-4. [Running the System](#running-the-system)  
-5. [Updates](#updates)  
-6. [Re-Run](#re-run)  
-7. [Network Slicing](#network-slicing)
+2. [Architecture Overview](#architecture-overview)  
+3. [Project Structure](#project-structure)  
+4. [Setup & Deployment](#setup--deployment)  
+5. [Monitoring with Prometheus & Grafana](#monitoring-with-prometheus--grafana)  
+6. [Running UE Simulation](#running-ue-simulation)  
+7. [Test Tagging & Data Filtering](#test-tagging--data-filtering)  
+8. [Cleaning Up](#cleaning-up)
 
 ---
 
 ## Prerequisites
 
-Ensure the following are installed and working:
+Install the following before continuing:
 
-- **Docker**: [Get Docker](https://docs.docker.com/get-docker/)
-- **Minikube**: [Install Minikube](https://minikube.sigs.k8s.io/docs/start/)
-- **kubectl**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/)
-- (Optional) **DockerHub Account** if pushing images
+- [Docker](https://docs.docker.com/get-docker/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Helm (for Grafana/Prometheus)](https://helm.sh/docs/intro/install/)
+- (Optional) DockerHub account if pushing images
+
+---
+
+## Architecture Overview
+
+```
++----------------+       +---------------+
+|  UE Simulator  |-----> |  API Gateway  |----+
++----------------+       +---------------+    |
+                                             \|/
+                                     +---------------+
+                                     |  Auth Service |
+                                     +---------------+
+                                     | Session Svc   |
+                                     | Policy Svc    |
+                                     | Resource Svc  |
+                                     | Data Svc      |
+                                     +---------------+
+
+                Namespaced Slices: embb | massive-iot | urllc
+```
+
+Each slice operates in its own namespace and receives traffic via the gateway. Prometheus scrapes `/metrics` across all services, and Grafana provides dashboards to visualize:
+
+- Request rates
+- Average latency
+- CPU usage per slice
 
 ---
 
@@ -89,7 +110,28 @@ Ensure the following are installed and working:
 
 ## Setup and Deployment
 
-### 1. Build Docker Images
+### 1. Start Minikube
+
+```bash
+minikube start --memory=6144 --cpus=3
+```
+
+### 2. Install Prometheus & Grafana
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+```bash
+kubectl create namespace monitoring
+```
+```bash
+helm install prometheus-stack prometheus-community/kube-prometheus-stack \
+  -f monitoring/prometheus-stack-values.yaml \
+  -n monitoring --create-namespace
+```
+
+### 3. Build & Push Docker Images
 
 ```bash
 # Build API Gateway
@@ -123,14 +165,12 @@ cd ..
 
 ```
 
-### 2. Deploy to Kubernetes
+### 4. Deploy to Kubernetes
 
 ```bash
-# Start Minikube
-minikube start
-
 # Apply network slice namespaces
 kubectl apply -f slices/namespaces.yaml
+kubectl apply -f monitoring/monitor.yaml
 
 # Deploy all services
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
@@ -141,6 +181,25 @@ kubectl apply -f resource-service/resource-service-deployment.yaml
 kubectl apply -f data-service/data-service-deployment.yaml
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
+
+## 📊 Monitoring with Prometheus & Grafana
+
+### 1. Access Grafana
+
+```bash
+kubectl port-forward svc/prometheus-stack-grafana -n monitoring 3000:80
+```
+
+Access Grafana at: [http://localhost:3000](http://localhost:3000)  
+Default login:  
+- **user**: `admin`  
+- **pass**: `prom-operator` (or your defined value)
+
+### 2. Import Dashboards
+
+- Navigate to Grafana → Dashboards → Import
+- Use dashboard IDs or JSON definitions (can be shared separately)
+
 
 ### 3. Verify Pods
 
@@ -176,11 +235,23 @@ kubectl delete -f data-service/data-service-deployment.yaml
 kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
-### Delete All (optional clean state)
+### 🧹 Delete All
+
+To delete everything:
 
 ```bash
-kubectl delete pods --all
-kubectl delete job --all
+kubectl delete -f slices/namespaces.yaml
+kubectl delete -f monitoring/monitor.yaml
+kubectl delete deployments --all -n embb
+kubectl delete deployments --all -n urllc
+kubectl delete deployments --all -n massive-iot
+helm uninstall prometheus-stack -n monitoring
+```
+
+To stop Minikube:
+
+```bash
+minikube stop
 ```
 
 ### Build & Push
