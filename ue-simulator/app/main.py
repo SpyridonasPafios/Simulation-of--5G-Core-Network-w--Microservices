@@ -37,9 +37,9 @@ async def main():
     # Adjust these parameters
     test_rounds = 3
     config = {
-        "embb": {"load_factor": 4, "frequency": 2},
-        "massive-iot": {"load_factor": 1, "frequency": 10},
-        "urllc": {"load_factor": 3, "frequency": 5}
+        "embb": {"load_factor": 1, "frequency": 2},
+        "massive-iot": {"load_factor": 1, "frequency": 5},
+        "urllc": {"load_factor": 1, "frequency": 3}
     }
 
     for round_num in range(test_rounds):

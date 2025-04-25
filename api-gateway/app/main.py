@@ -2,7 +2,9 @@ from fastapi import FastAPI, HTTPException
 import requests
 import os
 import logging
+from prometheus_fastapi_instrumentator import Instrumentator
 
+gateway = FastAPI()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -20,9 +22,6 @@ def stress_cpu(cpu_load, load_factor):
 def stress_ram(ram_load, load_factor):
     size = ram_load * load_factor * int(os.getenv("RAM_MULTIPLIER", 1000000))
     _ = bytearray(size)
-
-# --- API Gateway ---
-gateway = FastAPI()
 
 MICROSERVICES = {
     "auth": "http://auth-service:8001",
@@ -111,3 +110,10 @@ async def handle_request(request: dict):
     except Exception as e:
         logger.error(f"[EXCEPTION] General error: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Unexpected error: {str(e)}")
+    
+@gateway.get("/health")
+async def health():
+    return {"status": "ok"}
+
+Instrumentator().instrument(gateway).expose(gateway, endpoint="/metrics")
+

@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os
 
 session_service = FastAPI()
+
+Instrumentator().instrument(session_service).expose(session_service, endpoint="/metrics")
 
 def compute_pi(n):
     pi = 0.0

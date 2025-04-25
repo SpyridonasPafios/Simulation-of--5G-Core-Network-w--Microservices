@@ -79,6 +79,9 @@ Ensure the following are installed and working:
 ├── slices/
 │   └── namespaces.yaml
 │
+├── monitoring/
+│   └── monitor.yaml
+|
 └── README.md
 ```
 
@@ -237,7 +240,7 @@ kubectl apply -f policy-service/policy-service-deployment.yaml
 kubectl apply -f resource-service/resource-service-deployment.yaml
 kubectl apply -f data-service/data-service-deployment.yaml
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
-```
+kubectl apply -f monitoring/monitor.yaml
 
 ---
 

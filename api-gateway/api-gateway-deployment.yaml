@@ -23,12 +23,30 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "embb" 
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
         resources:
           requests:
-            cpu: "100m"
+            cpu: "50m"
             memory: "64Mi"
           limits:
-            cpu: "250m"
+            cpu: "100m"
             memory: "128Mi"
 ---
 apiVersion: v1
@@ -36,11 +54,14 @@ kind: Service
 metadata:
   name: api-gateway
   namespace: embb
+  labels:
+    app: api-gateway
 spec:
   selector:
     app: api-gateway
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8000
     targetPort: 8000
 ---
@@ -69,6 +90,24 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "massive-iot"  
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
         resources:
           requests:
             cpu: "50m"
@@ -82,11 +121,14 @@ kind: Service
 metadata:
   name: api-gateway
   namespace: massive-iot
+  labels:
+    app: api-gateway
 spec:
   selector:
     app: api-gateway
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8000
     targetPort: 8000
 ---
@@ -115,12 +157,30 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "urllc"  
+        ports:
+        - containerPort: 8000
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
         resources:
           requests:
-            cpu: "200m"
+            cpu: "100m"
             memory: "128Mi"
           limits:
-            cpu: "200m"
+            cpu: "100m"
             memory: "128Mi"
 ---
 apiVersion: v1
@@ -128,10 +188,13 @@ kind: Service
 metadata:
   name: api-gateway
   namespace: urllc
+  labels:
+    app: api-gateway
 spec:
   selector:
     app: api-gateway
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8000
     targetPort: 8000

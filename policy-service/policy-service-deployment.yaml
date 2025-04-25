@@ -23,12 +23,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "embb"  # Slice type for eMBB
+        ports:
+        - containerPort: 8003
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8003
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8003
         resources:
           requests:
-            cpu: "300m"
+            cpu: "100m"
             memory: "64Mi"
           limits:
-            cpu: "500m"
+            cpu: "200m"
             memory: "128Mi"
 ---
 apiVersion: v1
@@ -36,11 +46,14 @@ kind: Service
 metadata:
   name: policy-service
   namespace: embb
+  labels:
+    app: policy-service
 spec:
   selector:
     app: policy-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8003
     targetPort: 8003
 ---
@@ -69,12 +82,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "massive-iot"  # Slice type for Massive IoT
+        ports:
+        - containerPort: 8003
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8003
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8003
         resources:
           requests:
-            cpu: "150m"
+            cpu: "100m"
             memory: "64Mi"
           limits:
-            cpu: "300m"
+            cpu: "200m"
             memory: "128Mi"
 ---
 apiVersion: v1
@@ -82,11 +105,14 @@ kind: Service
 metadata:
   name: policy-service
   namespace: massive-iot
+  labels:
+    app: policy-service
 spec:
   selector:
     app: policy-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8003
     targetPort: 8003
 ---
@@ -115,12 +141,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "urllc"  
+        ports:
+        - containerPort: 8003
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8003
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8003
         resources:
           requests:
-            cpu: "400m"
+            cpu: "300m"
             memory: "128Mi"
           limits:
-            cpu: "400m"
+            cpu: "300m"
             memory: "128Mi"
 ---
 apiVersion: v1
@@ -128,10 +164,13 @@ kind: Service
 metadata:
   name: policy-service
   namespace: urllc
+  labels:
+    app: policy-service
 spec:
   selector:
     app: policy-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8003
     targetPort: 8003

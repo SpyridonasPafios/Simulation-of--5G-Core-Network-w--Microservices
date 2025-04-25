@@ -1,7 +1,11 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os
 
 policy_service = FastAPI()
+
+# Prometheus metrics setup
+Instrumentator().instrument(policy_service).expose(policy_service, endpoint="/metrics")
 
 def compute_pi(n):
     pi = 0.0

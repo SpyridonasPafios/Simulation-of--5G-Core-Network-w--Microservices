@@ -23,12 +23,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "embb"  # Slice type for eMBB
+        ports:
+        - containerPort: 8002
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
         resources:
           requests:
-            cpu: "300m" # Updated from 150m
+            cpu: "100m" # Updated from 150m
             memory: "128Mi" # No change
           limits:
-            cpu: "500m" # Updated from 300m
+            cpu: "200m" # Updated from 300m
             memory: "256Mi" # No change
 ---
 apiVersion: v1
@@ -36,11 +46,14 @@ kind: Service
 metadata:
   name: session-service
   namespace: embb
+  labels:
+    app: session-service
 spec:
   selector:
     app: session-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8002
     targetPort: 8002
 ---
@@ -69,12 +82,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "massive-iot"  # Slice type for Massive IoT
+        ports:
+        - containerPort: 8002
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
         resources:
           requests:
-            cpu: "150m" # No change
+            cpu: "100m" # No change
             memory: "128Mi" # Updated from 192Mi
           limits:
-            cpu: "300m" # No change
+            cpu: "200m" # No change
             memory: "256Mi" # Updated from 384Mi
 ---
 apiVersion: v1
@@ -82,11 +105,14 @@ kind: Service
 metadata:
   name: session-service
   namespace: massive-iot
+  labels:
+    app: session-service
 spec:
   selector:
     app: session-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8002
     targetPort: 8002
 ---
@@ -115,12 +141,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "urllc"  
+        ports:
+        - containerPort: 8002
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
         resources:
           requests:
-            cpu: "400m" 
+            cpu: "200m" 
             memory: "256Mi" 
           limits:
-            cpu: "400m"
+            cpu: "200m"
             memory: "256Mi" 
 ---
 apiVersion: v1
@@ -128,10 +164,13 @@ kind: Service
 metadata:
   name: session-service
   namespace: urllc
+  labels:
+    app: session-service
 spec:
   selector:
     app: session-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8002
     targetPort: 8002

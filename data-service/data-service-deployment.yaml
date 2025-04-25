@@ -23,12 +23,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "embb"  
+        ports:
+        - containerPort: 8005
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8005
         resources:
           requests:
-            cpu: "300m"
+            cpu: "100m"
             memory: "128Mi"
           limits:
-            cpu: "600m"
+            cpu: "200m"
             memory: "256Mi"
 ---
 apiVersion: v1
@@ -36,11 +46,14 @@ kind: Service
 metadata:
   name: data-service
   namespace: embb
+  labels:
+    app: data-service
 spec:
   selector:
     app: data-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8005
     targetPort: 8005
 ---
@@ -69,12 +82,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "massive-iot" 
+        ports:
+        - containerPort: 8005
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8005
         resources:
           requests:
-            cpu: "150m"
+            cpu: "100m"
             memory: "128Mi"
           limits:
-            cpu: "300m"
+            cpu: "200m"
             memory: "256Mi"
 ---
 apiVersion: v1
@@ -82,11 +105,14 @@ kind: Service
 metadata:
   name: data-service
   namespace: massive-iot
+  labels:
+    app: data-service
 spec:
   selector:
     app: data-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8005
     targetPort: 8005
 ---
@@ -115,12 +141,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "urllc"  
+        ports:
+        - containerPort: 8005
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8005
         resources:
           requests:
-            cpu: "500m"
+            cpu: "300m"
             memory: "256Mi"
           limits:
-            cpu: "500m"
+            cpu: "300m"
             memory: "256Mi"
 ---
 apiVersion: v1
@@ -128,10 +164,13 @@ kind: Service
 metadata:
   name: data-service
   namespace: urllc
+  labels:
+    app: data-service
 spec:
   selector:
     app: data-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8005
     targetPort: 8005

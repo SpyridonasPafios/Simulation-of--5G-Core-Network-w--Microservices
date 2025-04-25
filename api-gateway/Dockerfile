@@ -5,7 +5,7 @@ FROM python:3.11.9
 WORKDIR /app
 
 # Install dependencies
-RUN pip install fastapi uvicorn requests
+RUN pip install fastapi uvicorn requests prometheus-fastapi-instrumentator
 
 # Copy the rest of the application code
 COPY . .

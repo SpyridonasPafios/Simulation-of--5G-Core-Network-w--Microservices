@@ -23,12 +23,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "embb"
+        ports:
+        - containerPort: 8004
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8004
         resources:
           requests:
-            cpu: "400m"
+            cpu: "100m"
             memory: "128Mi"
           limits:
-            cpu: "600m"
+            cpu: "200m"
             memory: "256Mi"
 ---
 apiVersion: v1
@@ -36,11 +46,14 @@ kind: Service
 metadata:
   name: resource-service
   namespace: embb
+  labels:
+    app: resource-service
 spec:
   selector:
     app: resource-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8004
     targetPort: 8004
 ---
@@ -69,12 +82,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "massive-iot"
+        ports:
+        - containerPort: 8004
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8004
         resources:
           requests:
-            cpu: "200m"
+            cpu: "100m"
             memory: "128Mi"
           limits:
-            cpu: "400m"
+            cpu: "200m"
             memory: "256Mi"
 ---
 apiVersion: v1
@@ -82,11 +105,14 @@ kind: Service
 metadata:
   name: resource-service
   namespace: massive-iot
+  labels:
+    app: resource-service
 spec:
   selector:
     app: resource-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8004
     targetPort: 8004
 ---
@@ -115,12 +141,22 @@ spec:
           value: "1000000"
         - name: SLICE_TYPE
           value: "urllc"
+        ports:
+        - containerPort: 8004
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8004
         resources:
           requests:
-            cpu: "400m"
+            cpu: "300m"
             memory: "256Mi"
           limits:
-            cpu: "400m"
+            cpu: "300m"
             memory: "256Mi"
 ---
 apiVersion: v1
@@ -128,10 +164,13 @@ kind: Service
 metadata:
   name: resource-service
   namespace: urllc
+  labels:
+    app: resource-service
 spec:
   selector:
     app: resource-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
     port: 8004
     targetPort: 8004

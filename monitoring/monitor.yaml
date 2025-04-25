@@ -1,7 +1,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: embb-slice-monitor
+  name: embb-slice-monitor-api
   namespace: monitoring
   labels:
     release: prometheus-stack
@@ -12,6 +12,7 @@ spec:
   endpoints:
     - port: http
       path: /metrics
+      interval: 10s
   namespaceSelector:
     matchNames:
       - embb
@@ -19,7 +20,7 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: massive-iot-slice-monitor
+  name: massive-iot-slice-monitor-api
   namespace: monitoring
   labels:
     release: prometheus-stack
@@ -30,6 +31,7 @@ spec:
   endpoints:
     - port: http
       path: /metrics
+      interval: 10s
   namespaceSelector:
     matchNames:
       - massive-iot
@@ -37,7 +39,7 @@ spec:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: urllc-slice-monitor
+  name: urllc-slice-monitor-api
   namespace: monitoring
   labels:
     release: prometheus-stack
@@ -48,6 +50,292 @@ spec:
   endpoints:
     - port: http
       path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - urllc
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: embb-slice-monitor-auth
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - embb
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: massive-iot-slice-monitor-auth
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - massive-iot
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: urllc-slice-monitor-auth
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: auth-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - urllc
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: embb-slice-monitor-data
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: data-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - embb
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: massive-iot-slice-monitor-data
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: data-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - massive-iot
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: urllc-slice-monitor-data
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: data-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - urllc
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: embb-slice-monitor-policy
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: policy-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - embb
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: massive-iot-slice-monitor-policy
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: policy-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - massive-iot
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: urllc-slice-monitor-policy
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: policy-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - urllc
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: embb-slice-monitor-resource
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: resource-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - embb
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: massive-iot-slice-monitor-resource
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: resource-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - massive-iot
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: urllc-slice-monitor-resource
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: resource-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - urllc
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: embb-slice-monitor-session
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: session-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - embb
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: massive-iot-slice-monitor-session
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: session-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
+  namespaceSelector:
+    matchNames:
+      - massive-iot
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: urllc-slice-monitor-session
+  namespace: monitoring
+  labels:
+    release: prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: session-service
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 10s
   namespaceSelector:
     matchNames:
       - urllc
