@@ -131,7 +131,7 @@ helm install prometheus-stack prometheus-community/kube-prometheus-stack \
   -n monitoring --create-namespace
 ```
 
-### 3. Build & Push Docker Images
+### 3. Build Docker Images
 
 ```bash
 # Build API Gateway
