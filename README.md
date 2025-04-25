@@ -331,19 +331,22 @@ kubectl logs -f <ue-simulator-pod-name>
 ## Network Slicing
 
 To observe services within each network slice:
+Use link from Prometheus
+
+```bash
+minikube dashboard --url
+```
+or from terminal
 
 ```bash
 kubectl get pods -n embb
 kubectl get pods -n massive-iot
 kubectl get pods -n urllc
 ```
+
 ```bash
-#minikube
-minikube start --memory=6144 --cpus=3
-#Prometheus
-minikube dashboard --url
-#Grafana
-kubectl port-forward svc/prometheus-stack-grafana -n monitoring 3000:80
+#values Prometheus
+kubectl port-forward svc/prometheus-operated -n monitoring 9090:9090
 ```
 
 ---

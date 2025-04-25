@@ -26,7 +26,8 @@ async def ue_simulator(request_type, load_factor, slice_type):
 
 async def send_requests_once(slice_type, load_factor, frequency):
     global requests_sent
-    tasks = [asyncio.create_task(ue_simulator("registration", load_factor, slice_type)) for _ in range(frequency)]
+    request_types = ["registration", "session_establishment", "data_transfer"]
+    tasks = [asyncio.create_task(ue_simulator(req_type, load_factor, slice_type))for req_type in request_types for _ in range(frequency)]
     results = await asyncio.gather(*tasks)
     for res, latency in results:
         if latency is not None:
@@ -58,6 +59,4 @@ async def main():
         print(f"[{slice_type.upper()}] Total Requests: {requests_sent[slice_type]}, RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
 
 if __name__ == "__main__":
-    start_http_server(3000)
     asyncio.run(main())
-    sys.exit(0)
