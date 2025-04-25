@@ -266,5 +266,13 @@ kubectl get pods -n embb
 kubectl get pods -n massive-iot
 kubectl get pods -n urllc
 ```
+```bash
+#minikube
+minikube start --memory=6144 --cpus=3
+#Prometheus
+minikube dashboard --url
+#Grafana
+kubectl port-forward svc/prometheus-stack-grafana -n monitoring 3000:80
+```
 
 ---
