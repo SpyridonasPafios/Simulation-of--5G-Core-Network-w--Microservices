@@ -187,6 +187,9 @@ kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ### 1. Access Grafana
 
 ```bash
+#values Prometheus
+kubectl port-forward svc/prometheus-operated -n monitoring 9090:9090
+#Grafana
 kubectl port-forward svc/prometheus-stack-grafana -n monitoring 3000:80
 ```
 
@@ -235,7 +238,7 @@ kubectl delete -f data-service/data-service-deployment.yaml
 kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
-### 🧹 Delete All
+#### Delete All
 
 To delete everything:
 
@@ -246,12 +249,6 @@ kubectl delete deployments --all -n embb
 kubectl delete deployments --all -n urllc
 kubectl delete deployments --all -n massive-iot
 helm uninstall prometheus-stack -n monitoring
-```
-
-To stop Minikube:
-
-```bash
-minikube stop
 ```
 
 ### Build & Push
@@ -325,7 +322,11 @@ kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 kubectl get pods
 kubectl logs -f <ue-simulator-pod-name>
 ```
+To stop Minikube:
 
+```bash
+minikube stop
+```
 ---
 
 ## Network Slicing
@@ -342,11 +343,6 @@ or from terminal
 kubectl get pods -n embb
 kubectl get pods -n massive-iot
 kubectl get pods -n urllc
-```
-
-```bash
-#values Prometheus
-kubectl port-forward svc/prometheus-operated -n monitoring 9090:9090
 ```
 
 ---

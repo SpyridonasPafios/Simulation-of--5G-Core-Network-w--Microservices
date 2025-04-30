@@ -54,9 +54,9 @@ async def handle_request(request: dict):
         }
 
         # Add stress (simulated load)
-        logger.info("[LOAD] Stressing CPU and RAM")
-        stress_cpu(1, load_factor)
-        stress_ram(1, load_factor)
+        #logger.info("[LOAD] Stressing CPU and RAM")
+        #stress_cpu(1, load_factor)
+        #stress_ram(1, load_factor)
 
         # --- Request Flow ---
         if request_type == "registration":

@@ -13,7 +13,7 @@ async def ue_simulator(request_type, load_factor, slice_type):
     gateway_url = f"http://api-gateway.{namespace}.svc.cluster.local:8000/api/request"
     try:
         start = time.time()
-        async with httpx.AsyncClient(timeout=100.0) as client:
+        async with httpx.AsyncClient(timeout=50.0 if slice_type == "urllc" else 200.0) as client:
             response = await client.post(gateway_url, json=request)
         response.raise_for_status()
         end = time.time()
@@ -29,34 +29,62 @@ async def send_requests_once(slice_type, load_factor, frequency):
     request_types = ["registration", "session_establishment", "data_transfer"]
     tasks = [asyncio.create_task(ue_simulator(req_type, load_factor, slice_type))for req_type in request_types for _ in range(frequency)]
     results = await asyncio.gather(*tasks)
+    
     for res, latency in results:
         if latency is not None:
             latency_per_slice[slice_type].append(latency)
             requests_sent[slice_type] += 1
 
-async def main():
-    # Adjust these parameters
-    test_rounds = 3
-    config = {
-        "embb": {"load_factor": 1, "frequency": 2},
-        "massive-iot": {"load_factor": 1, "frequency": 5},
-        "urllc": {"load_factor": 1, "frequency": 3}
-    }
+async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
+    global requests_sent, latency_per_slice
+    requests_sent = {k: 0 for k in requests_sent}
+    latency_per_slice = {k: [] for k in latency_per_slice}
 
-    for round_num in range(test_rounds):
-        print(f"\n🚀 Starting test round {round_num + 1}")
+    print(f"\n🧪 Starting Test: {test_name}")
+
+    for round_num in range(rounds):
+        print(f"\n🚀 Test Round {round_num + 1}")
         await asyncio.gather(*[
             send_requests_once(slice, conf["load_factor"], conf["frequency"])
             for slice, conf in config.items()
         ])
-        await asyncio.sleep(1)  # short pause between rounds
+        await asyncio.sleep(delay_between_rounds)
 
-    # Summary
-    print("\n✅ TEST COMPLETED. Results:")
+    print(f"\n✅ Test {test_name} COMPLETED. Results:")
     for slice_type in requests_sent:
-        rps = requests_sent[slice_type] / test_rounds
-        avg_latency = sum(latency_per_slice[slice_type]) / len(latency_per_slice[slice_type]) if latency_per_slice[slice_type] else 0
-        print(f"[{slice_type.upper()}] Total Requests: {requests_sent[slice_type]}, RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
+        rps = requests_sent[slice_type] / (rounds * 3)  # 3 request_types
+        avg_latency = (
+            sum(latency_per_slice[slice_type]) / len(latency_per_slice[slice_type])
+            if latency_per_slice[slice_type]
+            else 0
+        )
+        print(f"[{slice_type.upper()}] Total Requests: {requests_sent[slice_type]}, "
+              f"RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
+
+async def main():
+    # 🧪 Test 1: Hit slice traits
+    heavy_load_test = {
+        "embb": {"load_factor": 5, "frequency": 2},       # Very heavy computation
+        "massive-iot": {"load_factor": 1, "frequency": 10}, # Very frequent lightweight
+        "urllc": {"load_factor": 1, "frequency": 5}         # Few but fast
+    }
+    await run_test("High Load Trait Testing", heavy_load_test)
+
+    # 🧪 Test 2: Normal load
+    normal_test = {
+        "embb": {"load_factor": 2, "frequency": 1},
+        "massive-iot": {"load_factor": 1, "frequency": 10},
+        "urllc": {"load_factor": 1, "frequency": 2}
+    }
+    await run_test("Normal Load Testing", normal_test)
+
+    # 🧪 Test 3: Low load / Minimal stress test
+    low_load_test = {
+        "embb": {"load_factor": 1, "frequency": 1},
+        "massive-iot": {"load_factor": 1, "frequency": 3},
+        "urllc": {"load_factor": 1, "frequency": 1}
+    }
+    await run_test("Low Load Minimal Stress", low_load_test)
 
 if __name__ == "__main__":
     asyncio.run(main())
