@@ -1,13 +1,14 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: ue-simulator
+  name: ue-simulator-non-slice
+  namespace: non-slice
 spec:
   template:
     spec:
       containers:
-      - name: ue-simulator
-        image: eliasandronikou/ue-simulator:latest
+      - name: ue-simulator-non-slice
+        image: eliasandronikou/ue-simulator-non-slice:latest
         env:
         - name: API_GATEWAY_URL
           value: "http://api-gateway.non-slice.svc.cluster.local:8000"  # Correct URL for the API Gateway

@@ -170,8 +170,8 @@ docker build -t eliasandronikou/ue-simulator .
 cd ..
 
 # Build UE Simulator For Non slice
-cd ../ue-simulator-nonslice
-docker build -t eliasandronikou/ue-simulator-nonslice .
+cd ../ue-simulator-non-slice
+docker build -t eliasandronikou/ue-simulator-non-slice .
 cd ..
 ```
 
@@ -221,17 +221,19 @@ kubectl get pods -A
 
 ---
 
-## Running the System
+### Running the System (slice-version)
 
 UE Simulator will start sending requests on deploy. You can monitor logs:
 
 ```bash
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
+kubectl get pods 
 kubectl logs -f <ue-simulator-pod-name>
 ```
 ---
 
-### Non-Slicing Simulation
+### Running the System (slice-version)
+
 
 #### Delete all the Previous Deployments of slicing
 
@@ -251,14 +253,16 @@ kubectl apply -f resource-service/resource-service-deployment-non-sliced.yaml
 kubectl apply -f data-service/data-service-deployment-non-sliced.yaml
 ```
 
-#### Running the System with No slice
+#### Running the System (non-slice version)
 
 UE Simulator will start sending requests on deploy. You can monitor logs:
 
 ```bash
-kubectl apply -f ue-simulator-nonslice/ue-simulator-deployment-non-sliced.yaml
-kubectl logs -f <ue-simulator-pod-name> -n non-slice
+kubectl apply -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
+kubectl get pods -n non-slice
+kubectl logs -f  -n non-slice <ue-simulator-pod-name>
 ```
+Re-run
 
 ## Updates
 
@@ -283,7 +287,7 @@ kubectl delete -f session-service/session-service-deployment-non-sliced.yaml
 kubectl delete -f policy-service/policy-service-deployment-non-sliced.yaml
 kubectl delete -f resource-service/resource-service-deployment-non-sliced.yaml
 kubectl delete -f data-service/data-service-deployment-non-sliced.yaml
-kubectl delete -f ue-simulator/ue-simulator-deployment-non-sliced.yaml
+kubectl delete -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
 
 ```
 
@@ -348,8 +352,8 @@ docker push eliasandronikou/ue-simulator:latest
 cd ..
 
 cd ue-simulator-non-slice
-docker build -t eliasandronikou/ue-simulator-nonslice .
-docker push eliasandronikou/ue-simulator-nonslice
+docker build -t eliasandronikou/ue-simulator-non-slice .
+docker push eliasandronikou/ue-simulator-non-slice:latest
 cd ..
 ```
 

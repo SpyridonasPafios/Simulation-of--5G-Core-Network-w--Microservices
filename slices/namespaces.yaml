@@ -49,13 +49,13 @@ spec:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: none-slice
+  name: non-slice
 ---
 apiVersion: v1
 kind: ResourceQuota
 metadata:
-  name: quota-none-slice
-  namespace: none-slice
+  name: quota-non-slice
+  namespace: non-slice
 spec:
   hard:
     cpu: "4"

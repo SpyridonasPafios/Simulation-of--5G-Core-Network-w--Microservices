@@ -35,10 +35,10 @@ MICROSERVICES = {
 async def handle_request(request: dict):
     request_type = request.get("type")
     load_factor = request.get("load_factor", 1)
-    slice_type = request.get("slice", "embb")
+    slice_type = request.get("slice")
     logger.info(f"[START] Received request: {request}")
 
-    namespace = {
+    namespace = "non-slice" if not slice_type else {
         "embb": "embb",
         "massive-iot": "massive-iot",
         "urllc": "urllc"
