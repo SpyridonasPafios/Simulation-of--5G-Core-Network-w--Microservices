@@ -210,11 +210,11 @@ spec:
             port: 8003
         resources:
           requests:
-            cpu: "300m"
-            memory: "128Mi"
+            cpu: "400m"
+            memory: "400Mi"
           limits:
-            cpu: "300m"
-            memory: "128Mi"
+            cpu: "800m"
+            memory: "800Mi"
 ---
 apiVersion: v1
 kind: Service
