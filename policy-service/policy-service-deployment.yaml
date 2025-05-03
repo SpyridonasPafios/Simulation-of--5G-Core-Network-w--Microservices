@@ -174,3 +174,60 @@ spec:
     protocol: TCP
     port: 8003
     targetPort: 8003
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: policy-service
+  namespace: non-slice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: policy-service
+  template:
+    metadata:
+      labels:
+        app: policy-service
+    spec:
+      containers:
+      - name: policy-service
+        image: eliasandronikou/policy-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000" 
+        ports:
+        - containerPort: 8003
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8003
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8003
+        resources:
+          requests:
+            cpu: "300m"
+            memory: "128Mi"
+          limits:
+            cpu: "300m"
+            memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: policy-service
+  namespace: non-slice
+  labels:
+    app: policy-service
+spec:
+  selector:
+    app: policy-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8003
+    targetPort: 8003
