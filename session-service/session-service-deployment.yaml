@@ -210,11 +210,11 @@ spec:
             port: 8002
         resources:
           requests:
-            cpu: "200m" 
-            memory: "256Mi" 
+            cpu: "300m" 
+            memory: "500Mi" 
           limits:
-            cpu: "200m"
-            memory: "256Mi" 
+            cpu: "600m"
+            memory: "1000Mi" 
 ---
 apiVersion: v1
 kind: Service
