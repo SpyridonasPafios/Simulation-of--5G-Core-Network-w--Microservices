@@ -11,11 +11,12 @@ Each service can exist in different namespaces (e.g. `embb`, `massive-iot`, `url
 1. [Prerequisites](#prerequisites)  
 2. [Architecture Overview](#architecture-overview)  
 3. [Project Structure](#project-structure)  
-4. [Setup & Deployment](#setup--deployment)  
+4. [Setup & Deployment](#setup-and-deployment)  
 5. [Monitoring with Prometheus & Grafana](#monitoring-with-prometheus--grafana)  
-6. [Running UE Simulation](#running-ue-simulation)  
-7. [Test Tagging & Data Filtering](#test-tagging--data-filtering)  
-8. [Cleaning Up](#cleaning-up)
+6. [Running UE Simulation](#running-the-system)  
+7. [Non-Slicing Simulation](#non-slicing-simulation)  
+8. [Test Tagging & Data Filtering](#test-tagging--data-filtering)  
+9. [Cleaning Up](#cleaning-up)
 
 ---
 
@@ -97,6 +98,11 @@ Each slice operates in its own namespace and receives traffic via the gateway. P
 │   ├── Dockerfile
 │   └── ue-simulator-deployment.yaml
 │
+├── ue-simulator-nonslice/
+│ ├── simulate_nonslice.py
+│ ├── Dockerfile
+│ └── ue-simulator-nonslice.yaml
+│
 ├── slices/
 │   └── namespaces.yaml
 │
@@ -113,7 +119,7 @@ Each slice operates in its own namespace and receives traffic via the gateway. P
 ### 1. Start Minikube
 
 ```bash
-minikube start --memory=6144 --cpus=3
+minikube start --memory=5500 --cpus=3
 ```
 
 ### 2. Install Prometheus & Grafana
@@ -163,6 +169,10 @@ cd ../ue-simulator
 docker build -t eliasandronikou/ue-simulator .
 cd ..
 
+# Build UE Simulator For Non slice
+cd ../ue-simulator-nonslice
+docker build -t eliasandronikou/ue-simulator-nonslice .
+cd ..
 ```
 
 ### 4. Deploy to Kubernetes
@@ -179,7 +189,6 @@ kubectl apply -f session-service/session-service-deployment.yaml
 kubectl apply -f policy-service/policy-service-deployment.yaml
 kubectl apply -f resource-service/resource-service-deployment.yaml
 kubectl apply -f data-service/data-service-deployment.yaml
-kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
 ## 📊 Monitoring with Prometheus & Grafana
@@ -217,10 +226,39 @@ kubectl get pods -A
 UE Simulator will start sending requests on deploy. You can monitor logs:
 
 ```bash
+kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 kubectl logs -f <ue-simulator-pod-name>
 ```
-
 ---
+
+### Non-Slicing Simulation
+
+#### Delete all the Previous Deployments of slicing
+
+```bash
+kubectl delete deployments --all -n embb
+kubectl delete deployments --all -n urllc
+kubectl delete deployments --all -n massive-iot
+```
+
+#### Deploy all services for non slicing
+```bash
+kubectl apply -f api-gateway/api-gateway-deployment-non-sliced.yaml
+kubectl apply -f auth-service/auth-service-deployment-non-sliced.yaml
+kubectl apply -f session-service/session-service-deployment-non-sliced.yaml
+kubectl apply -f policy-service/policy-service-deployment-non-sliced.yaml
+kubectl apply -f resource-service/resource-service-deployment-non-sliced.yaml
+kubectl apply -f data-service/data-service-deployment-non-sliced.yaml
+```
+
+#### Running the System with No slice
+
+UE Simulator will start sending requests on deploy. You can monitor logs:
+
+```bash
+kubectl apply -f ue-simulator-nonslice/ue-simulator-deployment-non-sliced.yaml
+kubectl logs -f <ue-simulator-pod-name> -n non-slice
+```
 
 ## Updates
 
@@ -229,6 +267,7 @@ When making code changes:
 ### Delete
 
 ```bash
+# For Slicing
 kubectl delete -f api-gateway/api-gateway-deployment.yaml
 kubectl delete -f auth-service/auth-service-deployment.yaml
 kubectl delete -f session-service/session-service-deployment.yaml
@@ -236,6 +275,16 @@ kubectl delete -f policy-service/policy-service-deployment.yaml
 kubectl delete -f resource-service/resource-service-deployment.yaml
 kubectl delete -f data-service/data-service-deployment.yaml
 kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
+
+# For non slicing
+kubectl delete -f api-gateway/api-gateway-deployment-non-sliced.yaml
+kubectl delete -f auth-service/auth-service-deployment-non-sliced.yaml
+kubectl delete -f session-service/session-service-deployment-non-sliced.yaml
+kubectl delete -f policy-service/policy-service-deployment-non-sliced.yaml
+kubectl delete -f resource-service/resource-service-deployment-non-sliced.yaml
+kubectl delete -f data-service/data-service-deployment-non-sliced.yaml
+kubectl delete -f ue-simulator/ue-simulator-deployment-non-sliced.yaml
+
 ```
 
 #### Delete All
@@ -248,6 +297,8 @@ kubectl delete -f monitoring/monitor.yaml
 kubectl delete deployments --all -n embb
 kubectl delete deployments --all -n urllc
 kubectl delete deployments --all -n massive-iot
+kubectl delete deployments --all -n non-sliced
+
 helm uninstall prometheus-stack -n monitoring
 ```
 
@@ -296,6 +347,10 @@ docker build -t eliasandronikou/ue-simulator .
 docker push eliasandronikou/ue-simulator:latest
 cd ..
 
+cd ue-simulator-non-slice
+docker build -t eliasandronikou/ue-simulator-nonslice .
+docker push eliasandronikou/ue-simulator-nonslice
+cd ..
 ```
 
 ### Apply
@@ -343,6 +398,7 @@ or from terminal
 kubectl get pods -n embb
 kubectl get pods -n massive-iot
 kubectl get pods -n urllc
+kubectl get pods -n non-slicing
 ```
 
 ---
