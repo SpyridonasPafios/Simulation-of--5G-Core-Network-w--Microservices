@@ -55,9 +55,7 @@ async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
 
 async def main():
     normal_test = [
-        {"load_factor": 2, "frequency": 1},
-        {"load_factor": 1, "frequency": 10},
-        {"load_factor": 1, "frequency": 2}
+        {"load_factor": 1, "frequency": 18}
     ]
     await run_test("Non-Slicing Normal Load", normal_test)
 

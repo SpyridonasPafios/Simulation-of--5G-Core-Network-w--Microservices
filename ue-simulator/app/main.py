@@ -13,7 +13,7 @@ async def ue_simulator(request_type, load_factor, slice_type):
     gateway_url = f"http://api-gateway.{namespace}.svc.cluster.local:8000/api/request"
     try:
         start = time.time()
-        async with httpx.AsyncClient(timeout=50.0 if slice_type == "urllc" else 200.0) as client:
+        async with httpx.AsyncClient(timeout=100.0 if slice_type == "urllc" else 200.0) as client:
             response = await client.post(gateway_url, json=request)
         response.raise_for_status()
         end = time.time()
@@ -62,29 +62,14 @@ async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
               f"RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
 
 async def main():
-    # 🧪 Test 1: Hit slice traits
-    heavy_load_test = {
-        "embb": {"load_factor": 5, "frequency": 2},       # Very heavy computation
-        "massive-iot": {"load_factor": 1, "frequency": 10}, # Very frequent lightweight
-        "urllc": {"load_factor": 1, "frequency": 5}         # Few but fast
-    }
-    await run_test("High Load Trait Testing", heavy_load_test)
-
-    # 🧪 Test 2: Normal load
+        # 🧪 Test : Normal load
     normal_test = {
         "embb": {"load_factor": 2, "frequency": 1},
         "massive-iot": {"load_factor": 1, "frequency": 10},
-        "urllc": {"load_factor": 1, "frequency": 2}
+        "urllc": {"load_factor": 1, "frequency": 4}
     }
     await run_test("Normal Load Testing", normal_test)
 
-    # 🧪 Test 3: Low load / Minimal stress test
-    low_load_test = {
-        "embb": {"load_factor": 1, "frequency": 1},
-        "massive-iot": {"load_factor": 1, "frequency": 3},
-        "urllc": {"load_factor": 1, "frequency": 1}
-    }
-    await run_test("Low Load Minimal Stress", low_load_test)
 
 if __name__ == "__main__":
     asyncio.run(main())

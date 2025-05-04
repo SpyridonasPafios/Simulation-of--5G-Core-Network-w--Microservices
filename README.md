@@ -228,11 +228,14 @@ UE Simulator will start sending requests on deploy. You can monitor logs:
 ```bash
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 kubectl get pods 
+# Wait until it is Completed
 kubectl logs -f <ue-simulator-pod-name>
+# Delete if you want to re-run
+kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 ```
 ---
 
-### Running the System (slice-version)
+### Running the System (non slice-version)
 
 
 #### Delete all the Previous Deployments of slicing
@@ -259,10 +262,12 @@ UE Simulator will start sending requests on deploy. You can monitor logs:
 
 ```bash
 kubectl apply -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
+# Wait until it is Completed
 kubectl get pods -n non-slice
 kubectl logs -f  -n non-slice <ue-simulator-pod-name>
+# Delete if you want to re-run
+kubectl delete -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
 ```
-Re-run
 
 ## Updates
 
