@@ -33,7 +33,7 @@ spec:
             port: 8004
         resources:
           requests:
-            cpu: "400m"
+            cpu: "300m"
             memory: "750Mi"
           limits:
             cpu: "500m"

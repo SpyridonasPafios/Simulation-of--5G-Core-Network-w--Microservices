@@ -94,13 +94,8 @@ spec:
             port: 8004
         resources:
           requests:
-<<<<<<< HEAD
-            cpu: "150m"
-            memory: "200Mi"
-=======
             cpu: "50m"
             memory: "128Mi"
->>>>>>> parent of 2ba8eba (a)
           limits:
             cpu: "150m"
             memory: "256Mi"
@@ -158,13 +153,8 @@ spec:
             port: 8004
         resources:
           requests:
-<<<<<<< HEAD
-            cpu: "150m"
-            memory: "250Mi"
-=======
             cpu: "200m"
             memory: "256Mi"
->>>>>>> parent of 2ba8eba (a)
           limits:
             cpu: "200m"
             memory: "256Mi"

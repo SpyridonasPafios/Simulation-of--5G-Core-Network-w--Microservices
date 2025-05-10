@@ -132,9 +132,10 @@ helm repo update
 kubectl create namespace monitoring
 ```
 ```bash
-helm install prometheus-stack prometheus-community/kube-prometheus-stack \
-  -f monitoring/prometheus-stack-values.yaml \
-  -n monitoring --create-namespace
+helm install prometheus-stack prometheus-community/kube-prometheus-stack -f monitoring/prometheus-stack-values.yaml -n monitoring --create-namespace
+
+
+helm install prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
 ```
 
 ### 3. Build Docker Images

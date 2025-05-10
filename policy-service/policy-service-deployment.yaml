@@ -153,19 +153,11 @@ spec:
             port: 8003
         resources:
           requests:
-<<<<<<< HEAD
-            cpu: "500m"
-            memory: "300Mi"
-          limits:
-            cpu: "500m"
-            memory: "300Mi"
-=======
             cpu: "300m"
             memory: "128Mi"
           limits:
             cpu: "300m"
             memory: "128Mi"
->>>>>>> parent of 2ba8eba (a)
 ---
 apiVersion: v1
 kind: Service

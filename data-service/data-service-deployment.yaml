@@ -35,13 +35,8 @@ spec:
             port: 8005
         resources:
           requests:
-<<<<<<< HEAD
-            cpu: "400m"
-            memory: "400Mi"
-=======
             cpu: "100m"
             memory: "256Mi"
->>>>>>> parent of 2ba8eba (a)
           limits:
             cpu: "300m"
             memory: "512Mi"
