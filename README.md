@@ -167,7 +167,6 @@ docker build -t eliasandronikou/data-service .
 # Build UE Simulator
 cd ../ue-simulator
 docker build -t eliasandronikou/ue-simulator .
-cd ..
 
 # Build UE Simulator For Non slice
 cd ../ue-simulator-non-slice
