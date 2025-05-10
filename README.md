@@ -119,7 +119,7 @@ Each slice operates in its own namespace and receives traffic via the gateway. P
 ### 1. Start Minikube
 
 ```bash
-minikube start --memory=5500 --cpus=3
+minikube start --memory=5500 --cpus=4
 ```
 
 ### 2. Install Prometheus & Grafana
@@ -241,9 +241,9 @@ kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 #### Delete all the Previous Deployments of slicing
 
 ```bash
-kubectl delete deployments --all -n embb
-kubectl delete deployments --all -n urllc
-kubectl delete deployments --all -n massive-iot
+kubectl delete all --all -n embb
+kubectl delete all --all -n urllc
+kubectl delete all --all -n massive-iot
 ```
 
 #### Deploy all services for non slicing
@@ -303,10 +303,10 @@ To delete everything:
 ```bash
 kubectl delete -f slices/namespaces.yaml
 kubectl delete -f monitoring/monitor.yaml
-kubectl delete deployments --all -n embb
-kubectl delete deployments --all -n urllc
-kubectl delete deployments --all -n massive-iot
-kubectl delete deployments --all -n non-sliced
+kubectl delete all --all -n embb
+kubectl delete all --all -n urllc
+kubectl delete all --all -n massive-iot
+kubectl delete all --all -n non-slice
 
 helm uninstall prometheus-stack -n monitoring
 ```

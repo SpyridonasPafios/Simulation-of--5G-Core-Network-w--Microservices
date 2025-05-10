@@ -33,7 +33,7 @@ async def send_requests_once(load_factor, frequency):
             latencies.append(latency)
             requests_sent += 1
 
-async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
+async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
     global requests_sent, latencies
     requests_sent = 0
     latencies = []
@@ -54,10 +54,26 @@ async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
     print(f"Total Requests: {requests_sent}, RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
 
 async def main():
-    normal_test = [
-        {"load_factor": 1, "frequency": 18}
+    heavy_test = [
+        {"load_factor": 4, "frequency": 3},
+        {"load_factor": 1, "frequency": 20},
+        {"load_factor": 2, "frequency": 5}
     ]
-    await run_test("Non-Slicing Normal Load", normal_test)
+    await run_test("Non-Slicing Heavy Load Factor", heavy_test)
+
+    normal_test = [
+        {"load_factor": 3, "frequency": 2},
+        {"load_factor": 1, "frequency": 10},
+        {"load_factor": 2, "frequency": 3}
+    ]
+    await run_test("Non-Slicing Normal Load Factor", normal_test)
+
+    light_test = [
+        {"load_factor": 1, "frequency": 20},
+        {"load_factor": 1, "frequency": 10},
+        {"load_factor": 1, "frequency": 5}
+    ]
+    await run_test("Non-Slicing Low Load Factor High Frequency", light_test)
 
 if __name__ == "__main__":
     asyncio.run(main())

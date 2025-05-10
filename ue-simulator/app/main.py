@@ -35,7 +35,7 @@ async def send_requests_once(slice_type, load_factor, frequency):
             latency_per_slice[slice_type].append(latency)
             requests_sent[slice_type] += 1
 
-async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
+async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
     global requests_sent, latency_per_slice
     requests_sent = {k: 0 for k in requests_sent}
     latency_per_slice = {k: [] for k in latency_per_slice}
@@ -64,9 +64,9 @@ async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
 async def main():
         # 🧪 Test : Normal load
     normal_test = {
-        "embb": {"load_factor": 1, "frequency": 3},
+        "embb": {"load_factor": 3, "frequency": 2},
         "massive-iot": {"load_factor": 1, "frequency": 10},
-        "urllc": {"load_factor": 1, "frequency": 5}
+        "urllc": {"load_factor": 2, "frequency": 3}
     }
     await run_test("Normal Load Testing", normal_test)
 
