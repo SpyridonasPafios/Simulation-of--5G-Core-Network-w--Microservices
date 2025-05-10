@@ -64,9 +64,9 @@ async def run_test(test_name, config, rounds=3, delay_between_rounds=10):
 async def main():
         # 🧪 Test : Normal load
     normal_test = {
-        "embb": {"load_factor": 2, "frequency": 1},
+        "embb": {"load_factor": 1, "frequency": 3},
         "massive-iot": {"load_factor": 1, "frequency": 10},
-        "urllc": {"load_factor": 1, "frequency": 4}
+        "urllc": {"load_factor": 1, "frequency": 5}
     }
     await run_test("Normal Load Testing", normal_test)
 

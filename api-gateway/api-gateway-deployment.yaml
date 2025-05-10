@@ -43,11 +43,11 @@ spec:
           failureThreshold: 8
         resources:
           requests:
-            cpu: "50m"
-            memory: "64Mi"
+            cpu: "30m"
+            memory: "30Mi"
           limits:
-            cpu: "100m"
-            memory: "128Mi"
+            cpu: "180m"
+            memory: "180Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -110,11 +110,11 @@ spec:
           failureThreshold: 8
         resources:
           requests:
-            cpu: "50m"
-            memory: "75Mi"
+            cpu: "10m"
+            memory: "10Mi"
           limits:
-            cpu: "100m"
-            memory: "150Mi"
+            cpu: "60m"
+            memory: "60Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -177,11 +177,11 @@ spec:
           failureThreshold: 8
         resources:
           requests:
-            cpu: "50m"
-            memory: "75Mi"
+            cpu: "60m"
+            memory: "60Mi"
           limits:
-            cpu: "100m"
-            memory: "150Mi"
+            cpu: "60m"
+            memory: "60Mi"
 ---
 apiVersion: v1
 kind: Service

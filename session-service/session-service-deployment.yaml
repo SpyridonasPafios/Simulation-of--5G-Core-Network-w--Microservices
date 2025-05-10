@@ -35,11 +35,11 @@ spec:
             port: 8002
         resources:
           requests:
-            cpu: "100m" # Updated from 150m
-            memory: "128Mi" # No change
+            cpu: "200m" 
+            memory: "150Mi" 
           limits:
-            cpu: "300m" # Updated from 300m
-            memory: "512Mi" # No change
+            cpu: "300m" 
+            memory: "350Mi" 
 ---
 apiVersion: v1
 kind: Service
@@ -94,11 +94,11 @@ spec:
             port: 8002
         resources:
           requests:
-            cpu: "50m" # No change
-            memory: "128Mi" # Updated from 192Mi
+            cpu: "50m" 
+            memory: "150Mi" 
           limits:
-            cpu: "150m" # No change
-            memory: "256Mi" # Updated from 384Mi
+            cpu: "150m" 
+            memory: "200Mi" 
 ---
 apiVersion: v1
 kind: Service
@@ -153,11 +153,11 @@ spec:
             port: 8002
         resources:
           requests:
-            cpu: "200m" 
-            memory: "256Mi" 
+            cpu: "150m" 
+            memory: "250Mi" 
           limits:
-            cpu: "200m"
-            memory: "256Mi" 
+            cpu: "150m"
+            memory: "250Mi" 
 ---
 apiVersion: v1
 kind: Service

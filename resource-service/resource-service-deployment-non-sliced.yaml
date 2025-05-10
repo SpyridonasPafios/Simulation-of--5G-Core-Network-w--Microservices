@@ -33,11 +33,11 @@ spec:
             port: 8004
         resources:
           requests:
-            cpu: "300m"
-            memory: "750Mi"
+            cpu: "400m"
+            memory: "300Mi"
           limits:
             cpu: "500m"
-            memory: "800Mi"
+            memory: "600Mi"
 ---
 apiVersion: v1
 kind: Service

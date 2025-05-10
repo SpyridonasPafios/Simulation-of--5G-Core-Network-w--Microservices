@@ -1,0 +1,42 @@
+# prometheus-stack-values.yaml
+prometheus:
+  enabled: true
+  prometheusSpec:
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 200m
+      limits:
+        memory: 512Mi
+        cpu: 500m
+    retention: 12h
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 1Gi
+    serviceMonitorSelector: {}
+    podMonitorSelector: {}
+
+alertmanager:
+  enabled: false  # disable Alertmanager to save resources
+
+grafana:
+  enabled: true  # 
+
+kubeStateMetrics:
+  enabled: false  # disable optional components
+
+nodeExporter:
+  enabled: false
+
+prometheusOperator:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
