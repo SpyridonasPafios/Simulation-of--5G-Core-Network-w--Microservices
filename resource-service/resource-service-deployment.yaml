@@ -36,10 +36,10 @@ spec:
         resources:
           requests:
             cpu: "100m"
-            memory: "128Mi"
+            memory: "150Mi"
           limits:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "150m"
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -94,11 +94,11 @@ spec:
             port: 8004
         resources:
           requests:
-            cpu: "50m"
-            memory: "128Mi"
-          limits:
             cpu: "150m"
-            memory: "256Mi"
+            memory: "350Mi"
+          limits:
+            cpu: "200m"
+            memory: "400Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -153,11 +153,11 @@ spec:
             port: 8004
         resources:
           requests:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "1500m"
+            memory: "250Mi"
           limits:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "150m"
+            memory: "250Mi"
 ---
 apiVersion: v1
 kind: Service

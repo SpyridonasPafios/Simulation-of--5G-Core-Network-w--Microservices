@@ -35,11 +35,11 @@ spec:
             port: 8003
         resources:
           requests:
-            cpu: "100m"
-            memory: "128Mi"
+            cpu: "150m"
+            memory: "100Mi"
           limits:
-            cpu: "400m"
-            memory: "256Mi"
+            cpu: "200m"
+            memory: "100Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -94,11 +94,11 @@ spec:
             port: 8003
         resources:
           requests:
-            cpu: "50m"
-            memory: "128Mi"
+            cpu: "100m"
+            memory: "200Mi"
           limits:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "100m"
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -153,11 +153,11 @@ spec:
             port: 8003
         resources:
           requests:
-            cpu: "300m"
-            memory: "128Mi"
+            cpu: "500m"
+            memory: "500Mi"
           limits:
-            cpu: "300m"
-            memory: "128Mi"
+            cpu: "500m"
+            memory: "500Mi"
 ---
 apiVersion: v1
 kind: Service

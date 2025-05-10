@@ -35,11 +35,11 @@ spec:
             port: 8001
         resources:
           requests:
-            cpu: "100m"
-            memory: "128Mi"
+            cpu: "150m"
+            memory: "150Mi"
           limits:
             cpu: "200m"
-            memory: "256Mi"
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -94,11 +94,11 @@ spec:
             port: 8001
         resources:
           requests:
-            cpu: "50m"
-            memory: "64Mi"
+            cpu: "100m"
+            memory: "150Mi"
           limits:
             cpu: "100m"
-            memory: "256Mi"
+            memory: "200Mi"
 ---
 apiVersion: v1
 kind: Service
@@ -153,11 +153,11 @@ spec:
             port: 8001
         resources:
           requests:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "300m"
+            memory: "400Mi"
           limits:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "300m"
+            memory: "400Mi"
 ---
 apiVersion: v1
 kind: Service
