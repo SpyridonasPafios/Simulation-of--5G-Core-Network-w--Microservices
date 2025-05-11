@@ -70,13 +70,30 @@ async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
               f"RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s, ")
 
 async def main():
-        # 🧪 Test : Normal load
+        # 🧪 Test : High load
+    heavy_test = {
+        "embb": {"load_factor": 2, "frequency": 2},
+        "massive-iot": {"load_factor": 1, "frequency": 20},
+        "urllc": {"load_factor": 2, "frequency": 3}
+    }
+    await run_test("High Load Testing", heavy_test)
+    
+
+    # 🧪 Test : Normal load
     normal_test = {
         "embb": {"load_factor": 3, "frequency": 2},
         "massive-iot": {"load_factor": 1, "frequency": 10},
-        "urllc": {"load_factor": 2, "frequency": 3}
+        "urllc": {"load_factor": 2, "frequency": 2}
     }
     await run_test("Normal Load Testing", normal_test)
+
+    # 🧪 Test : Low load, High Frequency
+    low_test = {
+        "embb": {"load_factor": 1, "frequency": 10},
+        "massive-iot": {"load_factor": 1, "frequency": 20},
+        "urllc": {"load_factor": 1, "frequency": 5}
+    }
+    await run_test("Low Load Testing and high Frequency", low_test)
 
 
 if __name__ == "__main__":

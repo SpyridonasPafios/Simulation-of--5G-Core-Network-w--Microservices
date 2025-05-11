@@ -62,22 +62,22 @@ async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
 
 async def main():
     heavy_test = [
-        {"load_factor": 4, "frequency": 3},
+        {"load_factor": 2, "frequency": 2},
         {"load_factor": 1, "frequency": 20},
-        {"load_factor": 2, "frequency": 5}
+        {"load_factor": 2, "frequency": 3}
     ]
     await run_test("Non-Slicing Heavy Load Factor", heavy_test)
 
     normal_test = [
-        {"load_factor": 3, "frequency": 2},
+        {"load_factor": 2, "frequency": 2},
         {"load_factor": 1, "frequency": 10},
-        {"load_factor": 2, "frequency": 3}
+        {"load_factor": 2, "frequency": 2}
     ]
     await run_test("Non-Slicing Normal Load Factor", normal_test)
 
     light_test = [
-        {"load_factor": 1, "frequency": 20},
         {"load_factor": 1, "frequency": 10},
+        {"load_factor": 1, "frequency": 20},
         {"load_factor": 1, "frequency": 5}
     ]
     await run_test("Non-Slicing Low Load Factor High Frequency", light_test)
