@@ -183,7 +183,7 @@ kubectl apply -f slices/namespaces.yaml
 kubectl apply -f monitoring/monitor.yaml
 ```
 
-If you have had any previous deployments services, go to [Delete All](#delete-all-the-Previous-Deployments,-Service-of-every-slicing-and-non-slicing)
+If you have had any previous deployments services, go to [Delete all the Previous Deployments, Service of every slicing and non slicing](####delete-all-the-Previous-Deployments,-Service-of-every-slicing-and-non-slicing)
 
 # Deploy all services
 ```bash
