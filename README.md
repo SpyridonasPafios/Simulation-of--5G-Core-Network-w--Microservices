@@ -184,7 +184,7 @@ kubectl apply -f monitoring/monitor.yaml
 ```
 If you have had any previous deployments services, go to:
 
-#### Delete all the Previous Deployments, Service of every slicing and non slicing
+##### Delete all the Previous Deployments, Service of every slicing and non slicing
 
 # Deploy all services
 ```bash
