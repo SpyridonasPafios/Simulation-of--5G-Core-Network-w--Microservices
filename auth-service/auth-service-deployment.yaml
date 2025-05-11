@@ -29,10 +29,18 @@ spec:
           httpGet:
             path: /health
             port: 8001
+        initialDelaySeconds: 60
+        periodSeconds: 15
+        timeoutSeconds: 5
+        failureThreshold: 8
         livenessProbe:
           httpGet:
             path: /health
             port: 8001
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 8
         resources:
           requests:
             cpu: "180m"

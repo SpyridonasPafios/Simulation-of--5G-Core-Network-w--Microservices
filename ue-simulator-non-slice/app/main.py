@@ -11,7 +11,7 @@ async def ue_simulator(request_type, load_factor):
     gateway_url = "http://api-gateway.non-slice.svc.cluster.local:8000/api/request"
     try:
         start = time.time()
-        async with httpx.AsyncClient(timeout=200.0) as client:
+        async with httpx.AsyncClient(timeout=300.0) as client:
             response = await client.post(gateway_url, json=request)
         response.raise_for_status()
         latency = time.time() - start
@@ -40,18 +40,25 @@ async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
 
     print(f"\n🧪 Starting Test: {test_name}")
 
+    total_latency = 0  # Initialize total latency for the test
     for round_num in range(rounds):
         print(f"\n🚀 Test Round {round_num + 1}")
+        start = time.time()
         await asyncio.gather(*[
             send_requests_once(conf["load_factor"], conf["frequency"])
             for conf in config
         ])
+        round_latency = time.time() - start
+        print(f"⏱️ Round {round_num + 1} Latency: {round_latency:.3f}s")  # Print round latency
+        total_latency += round_latency  # Accumulate latency for each round
         await asyncio.sleep(delay_between_rounds)
 
     rps = requests_sent / (rounds * 3)  # 3 request types
     avg_latency = (sum(latencies) / len(latencies)) if latencies else 0
     print(f"\n✅ Test {test_name} COMPLETED:")
-    print(f"Total Requests: {requests_sent}, RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
+    print(f"Total Latency: {total_latency:.3f}s")
+
+    print(f"Total Requests: {requests_sent}, RPS: {rps:.2f}, Avg Latency Per Request: {avg_latency:.3f}s")
 
 async def main():
     heavy_test = [

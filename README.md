@@ -181,8 +181,13 @@ cd ..
 # Apply network slice namespaces
 kubectl apply -f slices/namespaces.yaml
 kubectl apply -f monitoring/monitor.yaml
+```
+If you have had any previous deployments services, go to:
+
+#### Delete all the Previous Deployments, Service of every slicing and non slicing
 
 # Deploy all services
+```bash
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
 kubectl apply -f auth-service/auth-service-deployment.yaml
 kubectl apply -f session-service/session-service-deployment.yaml
@@ -238,12 +243,13 @@ kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
 ### Running the System (non slice-version)
 
 
-#### Delete all the Previous Deployments of slicing
+#### Delete all the Previous Deployments, Service of every slicing and non slicing
 
 ```bash
 kubectl delete all --all -n embb
 kubectl delete all --all -n urllc
 kubectl delete all --all -n massive-iot
+kubectl delete all --all -n non-slice
 ```
 
 #### Deploy all services for non slicing
@@ -301,13 +307,13 @@ kubectl delete -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
 To delete everything:
 
 ```bash
-kubectl delete -f slices/namespaces.yaml
-kubectl delete -f monitoring/monitor.yaml
 kubectl delete all --all -n embb
 kubectl delete all --all -n urllc
 kubectl delete all --all -n massive-iot
 kubectl delete all --all -n non-slice
 
+kubectl delete -f slices/namespaces.yaml
+kubectl delete -f monitoring/monitor.yaml
 helm uninstall prometheus-stack -n monitoring
 ```
 
@@ -373,19 +379,10 @@ kubectl apply -f resource-service/resource-service-deployment.yaml
 kubectl apply -f data-service/data-service-deployment.yaml
 kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 kubectl apply -f monitoring/monitor.yaml
-
+```
 ---
 
-## Re-Run
 
-To re-trigger UE simulation:
-
-```bash
-kubectl delete job ue-simulator
-kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
-kubectl get pods
-kubectl logs -f <ue-simulator-pod-name>
-```
 To stop Minikube:
 
 ```bash

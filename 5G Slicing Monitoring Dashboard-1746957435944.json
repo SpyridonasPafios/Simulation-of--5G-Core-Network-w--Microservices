@@ -360,13 +360,13 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "s"
         },
         "overrides": []
       },
       "gridPos": {
         "h": 6,
-        "w": 12,
+        "w": 4,
         "x": 12,
         "y": 8
       },
@@ -388,13 +388,199 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "1000 * (sum by (namespace) (\r\n  irate(http_request_duration_seconds_sum{namespace=~\"$namespace\", handler!=\"/metrics\", handler!=\"/health\"}[1m])\r\n) / sum by (namespace) (\r\n  irate(http_request_duration_seconds_count{namespace=~\"$namespace\", handler!=\"/metrics\", handler!=\"/health\"}[1m])\r\n))\r\n",
+          "expr": "(sum by (namespace) (\r\n  irate(http_request_duration_seconds_sum{namespace=~\"$namespace\", handler!=\"/metrics\", handler!=\"/health\"}[1m])\r\n) / sum by (namespace) (\r\n  irate(http_request_duration_seconds_count{namespace=~\"$namespace\", handler!=\"/metrics\", handler!=\"/health\"}[1m])\r\n))\r\n",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
         }
       ],
-      "title": "Average Latency per Slice",
+      "title": "Average Latency per Request",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 16,
+        "y": 8
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (namespace) (\r\n  rate(http_request_duration_seconds_sum{namespace=~\"$namespace\", handler!=\"/metrics\", handler!=\"/health\"}[1m])\r\n)*10\r\n",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Estimated Round Duration",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 4,
+        "x": 20,
+        "y": 8
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "editorMode": "code",
+          "expr": "sum by (namespace) (\r\n  increase(http_request_duration_seconds_sum{namespace=~\"$namespace\", handler!=\"/metrics\", handler!=\"/health\"}[5m])\r\n)\r\n",
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "title": "Total Latency over 5 minutes",
       "type": "timeseries"
     },
     {
@@ -775,8 +961,12 @@
       {
         "allowCustomValue": false,
         "current": {
-          "text": "All",
-          "value": "$__all"
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
         },
         "definition": "label_values({namespace=~\"embb|urllc|massive-iot|non-slice\"},namespace)",
         "includeAll": true,
@@ -796,12 +986,12 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "5G Slicing Monitoring Dashboard",
   "uid": "cejtu7476pjb4b",
-  "version": 30
+  "version": 33
 }

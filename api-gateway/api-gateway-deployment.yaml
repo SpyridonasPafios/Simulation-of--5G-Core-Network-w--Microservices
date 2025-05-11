@@ -165,23 +165,23 @@ spec:
             port: 8000
           initialDelaySeconds: 30
           periodSeconds: 15
-          timeoutSeconds: 3
+          timeoutSeconds: 5
           failureThreshold: 8
         livenessProbe:
           httpGet:
             path: /health
             port: 8000
-          initialDelaySeconds: 30
+          initialDelaySeconds: 60
           periodSeconds: 15
-          timeoutSeconds: 3
+          timeoutSeconds: 5
           failureThreshold: 8
         resources:
           requests:
-            cpu: "90m"
-            memory: "90Mi"
+            cpu: "110m"
+            memory: "110Mi"
           limits:
-            cpu: "90m"
-            memory: "90Mi"
+            cpu: "1100m"
+            memory: "110Mi"
 ---
 apiVersion: v1
 kind: Service
