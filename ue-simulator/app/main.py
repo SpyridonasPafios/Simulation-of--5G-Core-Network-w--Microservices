@@ -45,14 +45,14 @@ async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
     total_latency = {k: 0 for k in requests_sent}  # Initialize total latency for each slice
 
     for round_num in range(rounds):
-        print(f"\n🚀 Test Round {round_num + 1}")
+        #print(f"\n🚀 Test Round {round_num + 1}")
         start = time.time()
         await asyncio.gather(*[
             send_requests_once(slice, conf["load_factor"], conf["frequency"])
             for slice, conf in config.items()
         ])
         round_latency = time.time() - start
-        print(f"⏱️ Round {round_num + 1} Latency: {round_latency:.3f}s")  # Print round latency
+        #print(f"⏱️ Round {round_num + 1} Latency: {round_latency:.3f}s")  # Print round latency
         for slice_type in total_latency:
             total_latency[slice_type] += round_latency  # Accumulate latency for each slice
         await asyncio.sleep(delay_between_rounds)
@@ -65,36 +65,49 @@ async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
             if latency_per_slice[slice_type]
             else 0
         )
-        print(f"Total Latency: {total_latency[slice_type]:.3f}s")
+        #print(f"Total Latency: {total_latency[slice_type]:.3f}s")
         print(f"[{slice_type.upper()}] Total Requests: {requests_sent[slice_type]}, "
               f"RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s, ")
 
 async def main():
         # 🧪 Test : High load
     heavy_test = {
-        "embb": {"load_factor": 2, "frequency": 2},
-        "massive-iot": {"load_factor": 1, "frequency": 20},
-        "urllc": {"load_factor": 2, "frequency": 3}
-    }
-    await run_test("High Load Testing", heavy_test)
-    
-
-    # 🧪 Test : Normal load
-    normal_test = {
-        "embb": {"load_factor": 3, "frequency": 2},
-        "massive-iot": {"load_factor": 1, "frequency": 10},
-        "urllc": {"load_factor": 2, "frequency": 2}
-    }
-    await run_test("Normal Load Testing", normal_test)
-
-    # 🧪 Test : Low load, High Frequency
-    low_test = {
-        "embb": {"load_factor": 1, "frequency": 10},
+        "embb": {"load_factor": 2, "frequency": 1},
         "massive-iot": {"load_factor": 1, "frequency": 20},
         "urllc": {"load_factor": 1, "frequency": 5}
     }
-    await run_test("Low Load Testing and high Frequency", low_test)
+    start = time.time()
+    totalLatency = 0
+    await run_test("High Load Testing", heavy_test)
+    end = time.time()
+    totalLatency = end - start
+    print(f"Total Latency: {totalLatency:.3f}s")
 
+# 🧪 Test : Normal load
+    normal_test = {
+        "embb": {"load_factor": 2, "frequency": 1},
+        "massive-iot": {"load_factor": 1, "frequency": 10},
+        "urllc": {"load_factor": 1, "frequency": 2}
+    }
+    start = time.time()
+    totalLatency = 0
+    await run_test("Normal Load Testing", normal_test)
+    end = time.time()
+    totalLatency = end - start
+    print(f"Total Latency: {totalLatency:.3f}s")
+
+    # 🧪 Test : Low load High Frequency
+    high_freq_test = {
+        "embb": {"load_factor": 1, "frequency": 2},
+        "massive-iot": {"load_factor": 1, "frequency": 15},
+        "urllc": {"load_factor": 1, "frequency": 8}
+    }
+    start = time.time()
+    totalLatency = 0
+    await run_test("High Frequency Testing", high_freq_test)
+    end = time.time()
+    totalLatency = end - start
+    print(f"Total Latency: {totalLatency:.3f}s")
 
 if __name__ == "__main__":
     asyncio.run(main())

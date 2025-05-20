@@ -42,45 +42,57 @@ async def run_test(test_name, config, rounds=1, delay_between_rounds=10):
 
     total_latency = 0  # Initialize total latency for the test
     for round_num in range(rounds):
-        print(f"\n🚀 Test Round {round_num + 1}")
+        #print(f"\n🚀 Test Round {round_num + 1}")
         start = time.time()
         await asyncio.gather(*[
             send_requests_once(conf["load_factor"], conf["frequency"])
             for conf in config
         ])
         round_latency = time.time() - start
-        print(f"⏱️ Round {round_num + 1} Latency: {round_latency:.3f}s")  # Print round latency
+        #print(f"⏱️ Round {round_num + 1} Latency: {round_latency:.3f}s")  # Print round latency
         total_latency += round_latency  # Accumulate latency for each round
         await asyncio.sleep(delay_between_rounds)
 
     rps = requests_sent / (rounds * 3)  # 3 request types
     avg_latency = (sum(latencies) / len(latencies)) if latencies else 0
     print(f"\n✅ Test {test_name} COMPLETED:")
-    print(f"Total Latency: {total_latency:.3f}s")
+    #print(f"Total Latency: {total_latency:.3f}s")
 
-    print(f"Total Requests: {requests_sent}, RPS: {rps:.2f}, Avg Latency Per Request: {avg_latency:.3f}s")
+    print(f"Total Requests: {requests_sent}, RPS: {rps:.2f}, Avg Latency: {avg_latency:.3f}s")
 
 async def main():
     heavy_test = [
-        {"load_factor": 2, "frequency": 2},
-        {"load_factor": 1, "frequency": 20},
-        {"load_factor": 2, "frequency": 3}
+        {"load_factor":2 , "frequency": 27}
+        
     ]
+    start = time.time()
+    totalLatency = 0
     await run_test("Non-Slicing Heavy Load Factor", heavy_test)
+    end = time.time()
+    totalLatency = end - start
+    print(f"Total Latency: {totalLatency:.3f}s")
 
     normal_test = [
-        {"load_factor": 2, "frequency": 2},
-        {"load_factor": 1, "frequency": 10},
-        {"load_factor": 2, "frequency": 2}
+        {"load_factor":2 , "frequency": 14}
+        
     ]
+    start = time.time()
+    totalLatency = 0
     await run_test("Non-Slicing Normal Load Factor", normal_test)
+    end = time.time()
+    totalLatency = end - start
+    print(f"Total Latency: {totalLatency:.3f}s")
 
-    light_test = [
-        {"load_factor": 1, "frequency": 10},
-        {"load_factor": 1, "frequency": 20},
-        {"load_factor": 1, "frequency": 5}
+    highfrequency_test = [
+        {"load_factor":1 , "frequency": 25}
+        
     ]
-    await run_test("Non-Slicing Low Load Factor High Frequency", light_test)
+    start = time.time()
+    totalLatency = 0
+    await run_test("Non-Slicing High Frequency Load Factor", highfrequency_test)
+    end = time.time()
+    totalLatency = end - start
+    print(f"Total Latency: {totalLatency:.3f}s")
 
 if __name__ == "__main__":
     asyncio.run(main())
