@@ -185,7 +185,7 @@ kubectl apply -f monitoring/monitor.yaml
 
 If you have had any previous deployments services, go to [Delete all the Previous...](#delete-all-the-previous-deployments-service-of-every-slicing-and-non-slicing)
 
-# Deploy all services
+# Deploy all services (slice)
 ```bash
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
 kubectl apply -f auth-service/auth-service-deployment.yaml
