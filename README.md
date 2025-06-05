@@ -367,7 +367,7 @@ docker push eliasandronikou/ue-simulator-non-slice:latest
 cd ..
 ```
 
-### Apply
+### Apply for slice
 
 ```bash
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
@@ -376,8 +376,16 @@ kubectl apply -f session-service/session-service-deployment.yaml
 kubectl apply -f policy-service/policy-service-deployment.yaml
 kubectl apply -f resource-service/resource-service-deployment.yaml
 kubectl apply -f data-service/data-service-deployment.yaml
-kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
-kubectl apply -f monitoring/monitor.yaml
+```
+### Apply for non-slice
+
+```bash
+kubectl apply -f api-gateway/api-gateway-deployment-non-sliced.yaml
+kubectl apply -f auth-service/auth-service-deployment-non-sliced.yaml
+kubectl apply -f session-service/session-service-deployment-non-sliced.yaml
+kubectl apply -f policy-service/policy-service-deployment-non-sliced.yaml
+kubectl apply -f resource-service/resource-service-deployment-non-sliced.yaml
+kubectl apply -f data-service/data-service-deployment-non-sliced.yaml
 ```
 ---
 
