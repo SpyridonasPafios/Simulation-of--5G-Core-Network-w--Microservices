@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: data-service
+  namespace: embb
 spec:
   replicas: 1
   selector:
@@ -20,22 +21,164 @@ spec:
           value: "1000"
         - name: RAM_MULTIPLIER
           value: "1000000"
+        - name: SLICE_TYPE
+          value: "embb"  
+        ports:
+        - containerPort: 8005
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 8
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 8
         resources:
           requests:
-            cpu: "400m"
-            memory: "384Mi"
+            cpu: "225m"
+            memory: "225Mi"
           limits:
-            cpu: "800m"
-            memory: "768Mi"
+            cpu: "360m"
+            memory: "300Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: data-service
+  namespace: embb
+  labels:
+    app: data-service
 spec:
   selector:
     app: data-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
+    port: 8005
+    targetPort: 8005
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-service
+  namespace: massive-iot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-service
+  template:
+    metadata:
+      labels:
+        app: data-service
+    spec:
+      containers:
+      - name: data-service
+        image: eliasandronikou/data-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        - name: SLICE_TYPE
+          value: "massive-iot" 
+        ports:
+        - containerPort: 8005
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        resources:
+          requests:
+            cpu: "125m"
+            memory: "150Mi"
+          limits:
+            cpu: "240m"
+            memory: "200Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-service
+  namespace: massive-iot
+  labels:
+    app: data-service
+spec:
+  selector:
+    app: data-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8005
+    targetPort: 8005
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-service
+  namespace: urllc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-service
+  template:
+    metadata:
+      labels:
+        app: data-service
+    spec:
+      containers:
+      - name: data-service
+        image: eliasandronikou/data-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        - name: SLICE_TYPE
+          value: "urllc"  
+        ports:
+        - containerPort: 8005
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        resources:
+          requests:
+            cpu: "150m"
+            memory: "150Mi"
+          limits:
+            cpu: "150m"
+            memory: "150Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-service
+  namespace: urllc
+  labels:
+    app: data-service
+spec:
+  selector:
+    app: data-service
+  ports:
+  - name: http
+    protocol: TCP
     port: 8005
     targetPort: 8005

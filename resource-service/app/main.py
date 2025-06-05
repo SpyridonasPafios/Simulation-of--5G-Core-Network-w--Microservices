@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os
 
 resource_service = FastAPI()
@@ -26,3 +27,5 @@ async def allocate_resources(request: dict):
 @resource_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(resource_service).expose(resource_service, endpoint="/metrics")

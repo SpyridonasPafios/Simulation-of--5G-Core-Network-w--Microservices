@@ -20,8 +20,8 @@ metadata:
   namespace: embb
 spec:
   hard:
-    cpu: "4"
-    memory: "8Gi"
+    cpu: "1.5"
+    memory: "2.0Gi"
     pods: "10"
 ---
 apiVersion: v1
@@ -31,9 +31,9 @@ metadata:
   namespace: massive-iot
 spec:
   hard:
-    cpu: "2"
-    memory: "4Gi"
-    pods: "50"
+    cpu: "1"
+    memory: "1.0Gi"
+    pods: "30"
 ---
 apiVersion: v1
 kind: ResourceQuota
@@ -42,6 +42,22 @@ metadata:
   namespace: urllc
 spec:
   hard:
-    cpu: "3"
-    memory: "6Gi"
-    pods: "20"
+    cpu: "1.5"
+    memory: "2.5Gi"
+    pods: "15"
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: non-slice
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: quota-non-slice
+  namespace: non-slice
+spec:
+  hard:
+    cpu: "4"
+    memory: "5.5Gi"
+    pods: "55"

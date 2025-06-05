@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-service
+  namespace: non-slice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-service
+  template:
+    metadata:
+      labels:
+        app: data-service
+    spec:
+      containers:
+      - name: data-service
+        image: eliasandronikou/data-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000" 
+        ports:
+        - containerPort: 8005
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8005
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "600Mi"
+          limits:
+            cpu: "800m"
+            memory: "700Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: data-service
+  namespace: non-slice
+  labels:
+    app: data-service
+spec:
+  selector:
+    app: data-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8005
+    targetPort: 8005

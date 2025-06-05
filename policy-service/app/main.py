@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os
 
 policy_service = FastAPI()
@@ -26,3 +27,5 @@ async def apply_policy(request: dict):
 @policy_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(policy_service).expose(policy_service, endpoint="/metrics")

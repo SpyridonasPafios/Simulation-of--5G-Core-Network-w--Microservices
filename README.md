@@ -1,35 +1,61 @@
-# UE Simulator with Microservices
+# UE Simulator with Microservices & Network Slicing
 
-This project simulates a User Equipment (UE) interacting with a set of microservices via an API Gateway. The system includes the following components:
+This project simulates **User Equipment (UE)** interacting with a suite of microservices through an API Gateway. Services are separated into **network slices** via Kubernetes namespaces (`embb`, `massive-iot`, `urllc`) to emulate 5G slicing behavior. The system includes integrated **observability with Prometheus & Grafana**.
 
-- **UE Simulator**: Simulates requests to the API Gateway.
-- **API Gateway**: Routes requests to the appropriate microservices.
-- **Auth Service**: Handles authentication requests.
-- **Session Service**: Manages session establishment.
-- **Policy Service**: Applies policies.
-- **Resource Service**: Allocates resources.
-- **Data Service**: Handles data transfer requests.
+Each service can exist in different namespaces (e.g. `embb`, `massive-iot`, `urllc`) to simulate network slicing.
 
 ---
 
 ## Table of Contents
 
-1. [Prerequisites](#prerequisites)
-2. [Project Structure](#project-structure)
-3. [Setup and Deployment](#setup-and-deployment)
-4. [Running the System](#running-the-system)
-5. [Updates](#updates)
-6. [Re-Run](#re-run)
+1. [Prerequisites](#prerequisites)  
+2. [Architecture Overview](#architecture-overview)  
+3. [Project Structure](#project-structure)  
+4. [Setup & Deployment](#setup-and-deployment)  
+5. [Monitoring with Prometheus & Grafana](#monitoring-with-prometheus--grafana)  
+6. [Running UE Simulation](#running-the-system)  
+7. [Non-Slicing Simulation](#non-slicing-simulation)  
+8. [Test Tagging & Data Filtering](#test-tagging--data-filtering)  
+9. [Cleaning Up](#cleaning-up)
 
 ---
 
 ## Prerequisites
 
-Before running the project, ensure you have the following installed:
+Install the following before continuing:
 
-- **Docker**: [Install Docker](https://docs.docker.com/get-docker/)
-- **Kubernetes**: [Install Minikube](https://minikube.sigs.k8s.io/docs/start/) or use a Kubernetes cluster.
-- **kubectl**: [Install kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Minikube](https://minikube.sigs.k8s.io/docs/start/)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [Helm (for Grafana/Prometheus)](https://helm.sh/docs/intro/install/)
+- (Optional) DockerHub account if pushing images
+
+---
+
+## Architecture Overview
+
+```
++----------------+       +---------------+
+|  UE Simulator  |-----> |  API Gateway  |----+
++----------------+       +---------------+    |
+                                             \|/
+                                     +---------------+
+                                     |  Auth Service |
+                                     +---------------+
+                                     | Session Svc   |
+                                     | Policy Svc    |
+                                     | Resource Svc  |
+                                     | Data Svc      |
+                                     +---------------+
+
+                Namespaced Slices: embb | massive-iot | urllc
+```
+
+Each slice operates in its own namespace and receives traffic via the gateway. Prometheus scrapes `/metrics` across all services, and Grafana provides dashboards to visualize:
+
+- Request rates
+- Average latency
+- CPU usage per slice
 
 ---
 
@@ -38,58 +64,81 @@ Before running the project, ensure you have the following installed:
 ```
 .
 ├── api-gateway/
-│   ├── app/
-│   │   └── main.py              # Python code for API Gateway
-│   ├── Dockerfile               # Dockerfile for API Gateway
-│   └── api-gateway-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── api-gateway-deployment.yaml
 │
 ├── auth-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Authentication Service
-│   ├── Dockerfile               # Dockerfile for Authentication Service
-│   └── auth-service-deployment.yaml  # Kubernetes Deployment and Service YAML
-|
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── auth-service-deployment.yaml
+│
 ├── session-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Session Manager
-│   ├── Dockerfile               # Dockerfile for Session Manager
-│   └── session-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── session-service-deployment.yaml
 │
 ├── policy-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Policy Control Service
-│   ├── Dockerfile               # Dockerfile for Policy Control Service
-│   └── policy-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── policy-service-deployment.yaml
 │
 ├── resource-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Resource Manager
-│   ├── Dockerfile               # Dockerfile for Resource Manager
-│   └── resource-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── resource-service-deployment.yaml
 │
 ├── data-service/
-│   ├── app/
-│   │   └── main.py              # Python code for Data Forwarding Service
-│   ├── Dockerfile               # Dockerfile for Data Forwarding Service
-│   └── data-service-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── data-service-deployment.yaml
 │
 ├── ue-simulator/
-│   ├── app/
-│   │   └── main.py              # Python code for UE Simulator
-│   ├── Dockerfile               # Dockerfile for UE Simulator
-│   └── ue-simulator-deployment.yaml  # Kubernetes Deployment and Service YAML
+│   ├── app/main.py
+│   ├── Dockerfile
+│   └── ue-simulator-deployment.yaml
 │
-└── README.md                    # This file
-
+├── ue-simulator-nonslice/
+│ ├── simulate_nonslice.py
+│ ├── Dockerfile
+│ └── ue-simulator-nonslice.yaml
+│
+├── slices/
+│   └── namespaces.yaml
+│
+├── monitoring/
+│   └── monitor.yaml
+|
+└── README.md
 ```
 
 ---
 
 ## Setup and Deployment
 
-### 1. Build Docker Images
+### 1. Start Minikube
 
-Build Docker images for all services:
+```bash
+minikube start --memory=5500 --cpus=4
+```
+
+### 2. Install Prometheus & Grafana
+
+```bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+```
+```bash
+kubectl create namespace monitoring
+```
+```bash
+helm install prometheus-stack prometheus-community/kube-prometheus-stack -f monitoring/prometheus-stack-values.yaml -n monitoring --create-namespace
+
+
+helm install prometheus-stack prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
+```
+
+### 3. Build Docker Images
 
 ```bash
 # Build API Gateway
@@ -119,87 +168,155 @@ docker build -t eliasandronikou/data-service .
 # Build UE Simulator
 cd ../ue-simulator
 docker build -t eliasandronikou/ue-simulator .
+
+# Build UE Simulator For Non slice
+cd ../ue-simulator-non-slice
+docker build -t eliasandronikou/ue-simulator-non-slice .
 cd ..
-
 ```
 
-### 2. Deploy to Kubernetes
-
-Deploy the services to your Kubernetes cluster:
+### 4. Deploy to Kubernetes
 
 ```bash
-# Start Minikube  
-minikube start
+# Apply network slice namespaces
+kubectl apply -f slices/namespaces.yaml
+kubectl apply -f monitoring/monitor.yaml
+```
 
-# Deploy API Gateway
+If you have had any previous deployments services, go to [Delete all the Previous...](#delete-all-the-previous-deployments-service-of-every-slicing-and-non-slicing)
+
+# Deploy all services (slice)
+```bash
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
-
-# Deploy Auth Service
 kubectl apply -f auth-service/auth-service-deployment.yaml
-
-# Deploy Session Service
 kubectl apply -f session-service/session-service-deployment.yaml
-
-# Deploy Policy Service
 kubectl apply -f policy-service/policy-service-deployment.yaml
-
-# Deploy Resource Service
 kubectl apply -f resource-service/resource-service-deployment.yaml
-
-# Deploy Data Service
 kubectl apply -f data-service/data-service-deployment.yaml
-
-# Deploy UE Simulator
-kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
 
-### 3. Verify Deployment
+## 📊 Monitoring with Prometheus & Grafana
 
-Check that all pods are running:
+### 1. Access Grafana
 
 ```bash
-kubectl get pods
-kubectl get jobs
+#values Prometheus
+kubectl port-forward svc/prometheus-operated -n monitoring 9090:9090
+#Grafana
+kubectl port-forward svc/prometheus-stack-grafana -n monitoring 3000:80
+```
+
+Access Grafana at: [http://localhost:3000](http://localhost:3000)  
+Default login:  
+- **user**: `admin`  
+- **pass**: `prom-operator` (or your defined value)
+
+### 2. Import Dashboards
+
+- Navigate to Grafana → Dashboards → Import
+- 5G Slicing Monitoring Dashboard-1745591109882.json
+
+
+### 3. Verify Pods
+
+```bash
+kubectl get pods -A
 ```
 
 ---
 
-## Running the System
+### Running the System (slice-version)
 
-The `ue-simulator` will automatically start sending requests to the `api-gateway`. You can view the logs to see the results:
+UE Simulator will start sending requests on deploy. You can monitor logs:
 
 ```bash
+kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
+kubectl get pods 
+# Wait until it is Completed
 kubectl logs -f <ue-simulator-pod-name>
+# Delete if you want to re-run
+kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
+```
+---
+
+### Running the System (non slice-version)
+
+
+#### Delete all the Previous Deployments, Service of every slicing and non slicing
+
+```bash
+kubectl delete all --all -n embb
+kubectl delete all --all -n urllc
+kubectl delete all --all -n massive-iot
+kubectl delete all --all -n non-slice
+```
+
+#### Deploy all services for non slicing
+```bash
+kubectl apply -f api-gateway/api-gateway-deployment-non-sliced.yaml
+kubectl apply -f auth-service/auth-service-deployment-non-sliced.yaml
+kubectl apply -f session-service/session-service-deployment-non-sliced.yaml
+kubectl apply -f policy-service/policy-service-deployment-non-sliced.yaml
+kubectl apply -f resource-service/resource-service-deployment-non-sliced.yaml
+kubectl apply -f data-service/data-service-deployment-non-sliced.yaml
+```
+
+#### Running the System (non-slice version)
+
+UE Simulator will start sending requests on deploy. You can monitor logs:
+
+```bash
+kubectl apply -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
+# Wait until it is Completed
+kubectl get pods -n non-slice
+kubectl logs -f  -n non-slice <ue-simulator-pod-name>
+# Delete if you want to re-run
+kubectl delete -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
 ```
 
 ## Updates
-For each Microservice that changed run Delete, then Build & Push and Apply. Finally go to [Re-Run](#re-run)
+
+When making code changes:
 
 ### Delete
 
 ```bash
+# For Slicing
 kubectl delete -f api-gateway/api-gateway-deployment.yaml
-
 kubectl delete -f auth-service/auth-service-deployment.yaml
-
 kubectl delete -f session-service/session-service-deployment.yaml
-
 kubectl delete -f policy-service/policy-service-deployment.yaml
-
 kubectl delete -f resource-service/resource-service-deployment.yaml
-
 kubectl delete -f data-service/data-service-deployment.yaml
-
 kubectl delete -f ue-simulator/ue-simulator-deployment.yaml
+
+# For non slicing
+kubectl delete -f api-gateway/api-gateway-deployment-non-sliced.yaml
+kubectl delete -f auth-service/auth-service-deployment-non-sliced.yaml
+kubectl delete -f session-service/session-service-deployment-non-sliced.yaml
+kubectl delete -f policy-service/policy-service-deployment-non-sliced.yaml
+kubectl delete -f resource-service/resource-service-deployment-non-sliced.yaml
+kubectl delete -f data-service/data-service-deployment-non-sliced.yaml
+kubectl delete -f ue-simulator-non-slice/ue-simulator-deployment-non-sliced.yaml
+
 ```
 
-### Delete All
+#### Delete All
+
+To delete everything:
+
 ```bash
-kubectl delete pods --all -n default
-kubectl delete job --all
+kubectl delete all --all -n embb
+kubectl delete all --all -n urllc
+kubectl delete all --all -n massive-iot
+kubectl delete all --all -n non-slice
+
+kubectl delete -f slices/namespaces.yaml
+kubectl delete -f monitoring/monitor.yaml
+helm uninstall prometheus-stack -n monitoring
 ```
 
-### Build & PUSH (PUSH is only allowed in authorized accounts)
+### Build & Push
 
 ```bash
 # Build API Gateway
@@ -244,30 +361,57 @@ docker build -t eliasandronikou/ue-simulator .
 docker push eliasandronikou/ue-simulator:latest
 cd ..
 
+cd ue-simulator-non-slice
+docker build -t eliasandronikou/ue-simulator-non-slice .
+docker push eliasandronikou/ue-simulator-non-slice:latest
+cd ..
 ```
 
-### Apply
+### Apply for slice
+
 ```bash
 kubectl apply -f api-gateway/api-gateway-deployment.yaml
-
 kubectl apply -f auth-service/auth-service-deployment.yaml
-
 kubectl apply -f session-service/session-service-deployment.yaml
-
 kubectl apply -f policy-service/policy-service-deployment.yaml
-
 kubectl apply -f resource-service/resource-service-deployment.yaml
-
 kubectl apply -f data-service/data-service-deployment.yaml
-
-kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
 ```
-
-## Re-Run
+### Apply for non-slice
 
 ```bash
-kubectl delete job ue-simulator
-kubectl apply -f ue-simulator/ue-simulator-deployment.yaml
-kubectl get pods
-kubectl logs -f <ue-simulator-pod-name>
+kubectl apply -f api-gateway/api-gateway-deployment-non-sliced.yaml
+kubectl apply -f auth-service/auth-service-deployment-non-sliced.yaml
+kubectl apply -f session-service/session-service-deployment-non-sliced.yaml
+kubectl apply -f policy-service/policy-service-deployment-non-sliced.yaml
+kubectl apply -f resource-service/resource-service-deployment-non-sliced.yaml
+kubectl apply -f data-service/data-service-deployment-non-sliced.yaml
 ```
+---
+
+
+To stop Minikube:
+
+```bash
+minikube stop
+```
+---
+
+## Network Slicing
+
+To observe services within each network slice:
+Use link from Prometheus
+
+```bash
+minikube dashboard --url
+```
+or from terminal
+
+```bash
+kubectl get pods -n embb
+kubectl get pods -n massive-iot
+kubectl get pods -n urllc
+kubectl get pods -n non-slicing
+```
+
+---

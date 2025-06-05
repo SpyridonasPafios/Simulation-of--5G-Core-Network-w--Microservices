@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: resource-service
+  namespace: embb
 spec:
   replicas: 1
   selector:
@@ -20,22 +21,156 @@ spec:
           value: "1000"
         - name: RAM_MULTIPLIER
           value: "1000000"
+        - name: SLICE_TYPE
+          value: "embb"
+        ports:
+        - containerPort: 8004
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8004
         resources:
           requests:
-            cpu: "200m"
-            memory: "256Mi"
+            cpu: "140m"
+            memory: "150Mi"
           limits:
-            cpu: "500m"
-            memory: "512Mi"
+            cpu: "250m"
+            memory: "250Mi"
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: resource-service
+  namespace: embb
+  labels:
+    app: resource-service
 spec:
   selector:
     app: resource-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
+    port: 8004
+    targetPort: 8004
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-service
+  namespace: massive-iot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-service
+  template:
+    metadata:
+      labels:
+        app: resource-service
+    spec:
+      containers:
+      - name: resource-service
+        image: eliasandronikou/resource-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        - name: SLICE_TYPE
+          value: "massive-iot"
+        ports:
+        - containerPort: 8004
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        resources:
+          requests:
+            cpu: "80m"
+            memory: "90Mi"
+          limits:
+            cpu: "120m"
+            memory: "150Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-service
+  namespace: massive-iot
+  labels:
+    app: resource-service
+spec:
+  selector:
+    app: resource-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8004
+    targetPort: 8004
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: resource-service
+  namespace: urllc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: resource-service
+  template:
+    metadata:
+      labels:
+        app: resource-service
+    spec:
+      containers:
+      - name: resource-service
+        image: eliasandronikou/resource-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        - name: SLICE_TYPE
+          value: "urllc"
+        ports:
+        - containerPort: 8004
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8004
+        resources:
+          requests:
+            cpu: "130m"
+            memory: "100Mi"
+          limits:
+            cpu: "130m"
+            memory: "100Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: resource-service
+  namespace: urllc
+  labels:
+    app: resource-service
+spec:
+  selector:
+    app: resource-service
+  ports:
+  - name: http
+    protocol: TCP
     port: 8004
     targetPort: 8004

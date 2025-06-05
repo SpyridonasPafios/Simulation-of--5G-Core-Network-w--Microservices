@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os
 
 auth_service = FastAPI()
@@ -26,3 +27,5 @@ async def authenticate(request: dict):
 @auth_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(auth_service).expose(auth_service, endpoint="/metrics")

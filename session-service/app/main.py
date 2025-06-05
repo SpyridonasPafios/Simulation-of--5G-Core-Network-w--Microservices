@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os
 
 session_service = FastAPI()
@@ -26,3 +27,5 @@ async def start_session(request: dict):
 @session_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(session_service).expose(session_service, endpoint="/metrics")

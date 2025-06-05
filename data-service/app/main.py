@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 import os
 
 data_service = FastAPI()
@@ -26,3 +27,5 @@ async def forward_data(request: dict):
 @data_service.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+Instrumentator().instrument(data_service).expose(data_service, endpoint="/metrics")

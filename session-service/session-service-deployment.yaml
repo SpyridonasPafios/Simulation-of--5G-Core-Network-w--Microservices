@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: session-service
+  namespace: embb
 spec:
   replicas: 1
   selector:
@@ -20,22 +21,156 @@ spec:
           value: "1000"
         - name: RAM_MULTIPLIER
           value: "1000000"
+        - name: SLICE_TYPE
+          value: "embb"  # Slice type for eMBB
+        ports:
+        - containerPort: 8002
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
         resources:
           requests:
-            cpu: "300m"
-            memory: "384Mi"
+            cpu: "200m" 
+            memory: "250Mi" 
           limits:
-            cpu: "600m"
-            memory: "768Mi"
+            cpu: "300m" 
+            memory: "350Mi" 
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: session-service
+  namespace: embb
+  labels:
+    app: session-service
 spec:
   selector:
     app: session-service
   ports:
-  - protocol: TCP
+  - name: http
+    protocol: TCP
+    port: 8002
+    targetPort: 8002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-service
+  namespace: massive-iot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: session-service
+  template:
+    metadata:
+      labels:
+        app: session-service
+    spec:
+      containers:
+      - name: session-service
+        image: eliasandronikou/session-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        - name: SLICE_TYPE
+          value: "massive-iot"  # Slice type for Massive IoT
+        ports:
+        - containerPort: 8002
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        resources:
+          requests:
+            cpu: "100m" 
+            memory: "150Mi" 
+          limits:
+            cpu: "150m" 
+            memory: "200Mi" 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session-service
+  namespace: massive-iot
+  labels:
+    app: session-service
+spec:
+  selector:
+    app: session-service
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8002
+    targetPort: 8002
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: session-service
+  namespace: urllc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: session-service
+  template:
+    metadata:
+      labels:
+        app: session-service
+    spec:
+      containers:
+      - name: session-service
+        image: eliasandronikou/session-service:latest
+        env:
+        - name: CPU_MULTIPLIER
+          value: "1000"
+        - name: RAM_MULTIPLIER
+          value: "1000000"
+        - name: SLICE_TYPE
+          value: "urllc"  
+        ports:
+        - containerPort: 8002
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8002
+        resources:
+          requests:
+            cpu: "100m" 
+            memory: "150Mi" 
+          limits:
+            cpu: "100m"
+            memory: "150Mi" 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: session-service
+  namespace: urllc
+  labels:
+    app: session-service
+spec:
+  selector:
+    app: session-service
+  ports:
+  - name: http
+    protocol: TCP
     port: 8002
     targetPort: 8002
