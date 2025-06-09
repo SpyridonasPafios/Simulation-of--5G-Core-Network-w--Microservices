@@ -195,7 +195,7 @@ kubectl apply -f resource-service/resource-service-deployment.yaml
 kubectl apply -f data-service/data-service-deployment.yaml
 ```
 
-## 📊 Monitoring with Prometheus & Grafana
+## Monitoring with Prometheus & Grafana
 
 ### 1. Access Grafana
 
